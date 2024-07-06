@@ -5,6 +5,8 @@ from uvicorn import run
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from fastapi.responses import JSONResponse
 
+from datetime import datetime
+
 from application.contests.contests_service import ContestsService
 from application.moodle_grades.moodle_grades_file_creator import MoodleGradesFileCreator
 from application.students.students_service import StudentsService
@@ -77,7 +79,8 @@ async def get_contest(contest_id: int, key: str, secret: str) -> Contest:
 
 @app.post("/moodle_grades", status_code=status.HTTP_200_OK)
 async def get_grades(results_data: MoodleResultsData) -> StreamingResponse:
-    file, filename = container[MoodleGradesFileCreator].create_file(results_data)
+    filename = f"moodle_grades_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv"
+    file = container[MoodleGradesFileCreator].create_file(results_data)
     content_length = len(file.getvalue())
     file.seek(0)
 
