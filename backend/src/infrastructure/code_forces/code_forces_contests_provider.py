@@ -1,10 +1,12 @@
 from collections import defaultdict
 from datetime import datetime, timedelta
 from typing import Callable
+from pytz import timezone
 
 from domain.student import Student
 from domain.contest import Contest, Submission, Problem
 from application.contests.contests_provider import IContestsProvider
+from infrastructure.code_forces.enums import CfVerdict
 from infrastructure.code_forces.requests_sending.code_forces_request_sender import (ICodeForcesRequestsSender,
                                                                                     IAnonymousCodeForcesRequestsSender)
 
@@ -45,7 +47,7 @@ class CodeForcesContestsProvider(IContestsProvider):
                 author=Student(
                     handle=cf_submission.author.members[0].handle
                 ),
-                verdict=cf_submission.verdict.value,
+                is_successful=cf_submission.verdict == CfVerdict.OK,
                 passed_test_count=cf_submission.passedTestCount,
                 points=cf_submission.points,
                 programming_language=cf_submission.programmingLanguage
@@ -64,7 +66,7 @@ class CodeForcesContestsProvider(IContestsProvider):
         return Contest(
             id=contest_id,
             name=cf_contest.name,
-            start_time=datetime.utcfromtimestamp(cf_contest.startTimeSeconds),
+            start_time_utc=datetime.fromtimestamp(cf_contest.startTimeSeconds, tz=timezone("utc")),
             duration=timedelta(cf_contest.durationSeconds),
             problems=problems
         )

@@ -5,14 +5,13 @@ from typing import Callable
 from pydantic import BaseModel, EmailStr
 from datetime import datetime, timedelta
 
-from domain.enums import Verdict
 from domain.student import Student
 
 
 class Contest(BaseModel):
     id: int
     name: str
-    start_time: datetime
+    start_time_utc: datetime
     duration: timedelta
     problems: list[Problem]
 
@@ -65,7 +64,7 @@ class Problem(BaseModel):
 class Submission(BaseModel):
     id: int
     author: Student
-    verdict: Verdict
+    is_successful: bool
     passed_test_count: int
     points: float | None
     programming_language: str

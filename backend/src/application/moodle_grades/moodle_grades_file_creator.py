@@ -5,7 +5,6 @@ from collections import defaultdict
 from fastapi import HTTPException
 
 from contracts.moodle_results_data import MoodleResultsData, ProblemData, SubmissionData
-from domain.enums import Verdict
 
 
 class MoodleGradesFileCreator:
@@ -43,10 +42,7 @@ class MoodleGradesFileCreator:
 
     @staticmethod
     def get_grade_by_verdict(submission: SubmissionData, problem: ProblemData) -> float:
-        if submission.verdict == Verdict.OK.value:
-            return problem.max_grade
-
-        return 0.0
+        return problem.max_grade if submission.is_successful else 0
 
     @staticmethod
     def write_to_file(writer: csv.writer, student_grade_map: defaultdict[str, list[float | str]]) -> None:
