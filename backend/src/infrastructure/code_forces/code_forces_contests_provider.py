@@ -1,4 +1,5 @@
 from collections import defaultdict
+from datetime import datetime, timedelta
 from typing import Callable
 
 from domain.student import Student
@@ -63,7 +64,8 @@ class CodeForcesContestsProvider(IContestsProvider):
         return Contest(
             id=contest_id,
             name=cf_contest.name,
-            phase=cf_contest.phase.value,
+            start_time=datetime.utcfromtimestamp(cf_contest.startTimeSeconds),
+            duration=timedelta(cf_contest.durationSeconds),
             problems=problems
         )
 
