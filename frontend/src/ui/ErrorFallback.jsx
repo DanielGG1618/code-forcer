@@ -2,6 +2,8 @@ import styled from "styled-components";
 import GlobalStyles from "../styles/GlobalStyles.js";
 import Button from "./Button.jsx";
 import Heading from "./Heading.jsx";
+import { useRouteError } from "react-router-dom";
+import { useMoveBack } from "../hooks/useMoveBack.js";
 
 const StyledErrorFallback = styled.main`
   height: 100vh;
@@ -33,15 +35,18 @@ const Box = styled.div`
   }
 `;
 
-function ErrorFallback({ error, resetErrorBoundary }) {
+function ErrorFallback({}) {
+  const error = useRouteError();
+  const moveBack = useMoveBack();
+
   return (
     <>
       <GlobalStyles />
       <StyledErrorFallback>
         <Box>
           <Heading as="h1">Something went wrong 🤔</Heading>
-          <p>{error.message}</p>
-          <Button size="large" onClick={resetErrorBoundary}>
+          <p>{error.statusText || error.message}</p>
+          <Button size="large" onClick={moveBack}>
             Try again!
           </Button>
         </Box>

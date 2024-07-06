@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import Heading from "./Heading.jsx";
 import Input from "./Input.jsx";
@@ -7,6 +7,10 @@ import { BsFillArrowLeftSquareFill } from "react-icons/bs";
 import { useForm } from "react-hook-form";
 import Button from "./Button.jsx";
 import SpinnerMini from "./SpinnnerMini.jsx";
+import { useMoveBack } from "../hooks/useMoveBack.js";
+import { handlePostRequest } from "../api/contests.js";
+import { useLocalStorageState } from "../hooks/useLocalStorage.js";
+import { Link } from "react-router-dom";
 
 const StyledCover = styled.div`
   position: relative;
@@ -31,8 +35,8 @@ const ButtonBack = styled.button`
   border: none;
 
   svg {
-    width: 3.2rem;
-    height: 3.2rem;
+    width: 5rem;
+    height: 5rem;
     transition: fill 0.3s ease;
   }
   &:hover svg {
@@ -87,9 +91,17 @@ const ItemRow = styled.div`
   align-items: center;
   justify-content: center;
   gap: 2.5rem;
+  margin-top: 2rem;
 
-  &:last-child {
-    margin-top: 2rem;
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  span strong {
+    align-self: flex-start;
+    font-size: 2rem;
+    padding-bottom: 0.3rem;
   }
 `;
 
@@ -110,94 +122,107 @@ const Error = styled.span`
   color: var(--color-red-700);
 `;
 
-function SumbissionInfo({ info, reset }) {
+const UndefinedUsersList = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  row-gap: 0.6rem;
+  column-gap: 1.2rem;
+  margin-top: 2rem;
+
+  & span {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  & span::before {
+    content: "";
+    flex: 0 0 0.3rem;
+    width: 0.3rem;
+    height: 0.3rem;
+    border-radius: 100%;
+    background-color: var(--color-grey-700);
+  }
+`;
+
+const UndefinedDescription = styled.p`
+  padding: 2rem 2.5rem;
+  border: 2px solid var(--color-red-400);
+  border-radius: var(--border-radius-md);
+
+  font-weight: 400;
+  b {
+    font-weight: 500;
+  }
+  a {
+    font-weight: 500;
+    text-decoration: underline;
+  }
+`;
+
+function SumbissionsInfo({ info }) {
+  const definedUsers = {
+    ...info,
+    problems: info.problems.map((item) => {
+      return {
+        ...item,
+        submissions: item.submissions.filter(
+          (item) => item.author.email != null,
+        ),
+      };
+    }),
+  };
+  const unpossibleReqest = definedUsers.problems.every(
+    (item) => item.submissions.length === 0,
+  );
+  console.log(unpossibleReqest);
+
+  const moveBack = useMoveBack();
+  const [contestPoints, setContestPoints] = useLocalStorageState(
+    [],
+    `contest-${info.id}`,
+  );
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
   } = useForm();
+
+  useEffect(() => {
+    const subscription = watch((value) => {
+      setContestPoints(
+        Object.values(value).map((item) => parseFloat(item) || undefined),
+      );
+    });
+    return () => subscription.unsubscribe();
+  }, [setContestPoints, watch]);
+
   const [isGetting, setIsGetting] = useState(false);
 
-  async function handlePostRequest(data) {
-    setIsGetting(true);
-    const verdicts = {
-      1: "FAILED",
-      2: "OK",
-      3: "PARTIAL",
-      4: "COMPILATION_ERROR",
-      5: "RUNTIME_ERROR",
-      6: "WRONG_ANSWER",
-      7: "PRESENTATION_ERROR",
-      8: "TIME_LIMIT_EXCEEDED",
-      9: "MEMORY_LIMIT_EXCEEDED",
-      10: "IDLENESS_LIMIT_EXCEEDED",
-      11: "SECURITY_VIOLATED",
-      12: "CRASHED",
-      13: "INPUT_PREPARATION_CRASHED",
-      14: "CHALLENGED",
-      15: "SKIPPED",
-      16: "TESTING",
-      17: "REJECTED",
-    };
-    const body = {
-      contest: {
-        id: info.id,
-        name: info.name,
-        problems: info.problems.map((item, index) => {
-          return {
-            name: item.name,
-            index: item.index,
-            max_points: parseFloat(data[`${index}`]),
-            max_grade: parseFloat(data[`${index}`]),
-            submissions: item.submissions.map((item) => {
-              return {
-                id: item?.id,
-                author_email: item?.author?.email || "",
-                verdict: verdicts[item?.verdict],
-                passed_test_count: item?.passed_test_count,
-                points: item?.points || 0,
-                programming_language: item?.programming_language,
-              };
-            }),
-          };
-        }),
-      },
-      plagiarizers: [],
-      legally_excused: [],
-      late_submission_rules: {},
-    };
-    const response = await fetch("http://10.90.137.106:8000/moodle_grades", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json;charset=utf-8",
-      },
-      body: JSON.stringify(body),
-    });
-    if (response.status >= 500) {
-      throw new Error("Something went wrong with CodeForces");
-    } else if (!response.ok) {
-      throw new Error("Something went wrong!");
-    }
-    return response;
-  }
-
   const onSubmit = function (data) {
-    handlePostRequest(data)
-      .then((res) => res.blob())
+    setIsGetting(true);
+
+    handlePostRequest(definedUsers, data)
+      .then((res) => {
+        return res.blob();
+      })
       .then((blob) => {
         var file = window.URL.createObjectURL(blob);
         window.location.assign(file);
-        setIsGetting(false);
       })
       .catch((err) => {
         toast.error(err.message);
+      })
+      .finally(() => {
         setIsGetting(false);
       });
   };
 
   return (
     <StyledCover>
-      <ButtonBack onClick={() => reset({})}>
+      <ButtonBack onClick={moveBack}>
         <BsFillArrowLeftSquareFill />
       </ButtonBack>
       <Heading as="h2">Contest &quot;{info.name}&quot;</Heading>
@@ -206,40 +231,82 @@ function SumbissionInfo({ info, reset }) {
       </Description>
       <List onSubmit={handleSubmit(onSubmit)}>
         {info.problems.map((item, index) => (
-          <Item key={index}>
-            <strong>
-              {item.index} (&quot;{item.name}&quot;)
-            </strong>
-            <ItemInput
-              placeholder="Maximum points per task"
-              data-index={index}
-              disabled={isGetting}
-              {...register(`${index}`, {
-                required: "This field is required",
-                pattern: {
-                  value: /^\d*\.?\d*$/,
-                  message: "Incorrect value",
-                },
-              })}
-            />
-            {errors[`${index}`] && <Error>{errors[`${index}`].message}</Error>}
-            <ItemRow>
-              <span>
-                Total number of sumbissions:{" "}
-                <strong>{item.submissions.length}</strong>
-              </span>
-              <span>
-                Undefined participants: <strong>X</strong>
-              </span>
-            </ItemRow>
-          </Item>
+          <SubmissionItem key={index} item={item} index={index}>
+            <>
+              <strong>
+                {item.index} (&quot;{item.name}&quot;)
+              </strong>
+              <ItemInput
+                placeholder="Maximum points per task"
+                data-index={index}
+                disabled={isGetting}
+                defaultValue={contestPoints[index]}
+                {...register(`${index}`, {
+                  required: "This field is required",
+                  pattern: {
+                    value: /^\d*\.?\d*$/,
+                    message: "Incorrect value",
+                  },
+                })}
+              />
+              {errors[`${index}`] && (
+                <Error>{errors[`${index}`].message}</Error>
+              )}
+            </>
+          </SubmissionItem>
         ))}
-        <Button disabled={isGetting}>
-          {isGetting ? <SpinnerMini /> : "Create a rating file"}
-        </Button>
+        {unpossibleReqest ? (
+          <UndefinedDescription style={{ fontWeight: "400" }}>
+            There are no solutions that could be obtained, please{" "}
+            <b>wait for the end of the contest</b> or{" "}
+            <Link to="/handles">download the handles</Link> of the participants
+          </UndefinedDescription>
+        ) : (
+          <Button disabled={isGetting} type="submit">
+            {isGetting ? <SpinnerMini /> : "Create a rating file"}
+          </Button>
+        )}
       </List>
     </StyledCover>
   );
 }
 
-export default SumbissionInfo;
+function SubmissionItem({ index, item, children }) {
+  const undefinedUsers = item.submissions.filter((item) => !item.author.email);
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <Item>
+      {children}
+      <ItemRow>
+        <span>
+          Total number of sumbissions:
+          <strong>{item?.submissions?.length}</strong>
+        </span>
+
+        {undefinedUsers.length > 0 ? (
+          <span>
+            Undefined participants: <strong>{undefinedUsers?.length}</strong>
+            <Button
+              size="small"
+              type="button"
+              onClick={() => setIsOpen((open) => !open)}
+            >
+              {!isOpen ? "SHOW" : "HIDE"}
+            </Button>
+          </span>
+        ) : (
+          <span>All users are defined</span>
+        )}
+      </ItemRow>
+      {isOpen && (
+        <UndefinedUsersList id={`list-${index}`}>
+          {undefinedUsers.map((user) => (
+            <span key={user?.author?.handle}>{user?.author?.handle}</span>
+          ))}
+        </UndefinedUsersList>
+      )}
+    </Item>
+  );
+}
+export default SumbissionsInfo;

@@ -54,7 +54,7 @@ function MainNav() {
     <nav>
       <NavList>
         <li>
-          <StyledNavLink to="/home">
+          <StyledNavLink to="/">
             <HiHome />
             <span>Home</span>
           </StyledNavLink>
@@ -65,12 +65,6 @@ function MainNav() {
             <span>Download Submissions</span>
           </StyledNavLink>
         </li>
-        {/*<li>
-          <StyledNavLink to="/submit">
-            <SiMoodle />
-            <span>Submit Grades</span>
-          </StyledNavLink>
-        </li>*/}
         <li>
           <StyledNavLink to="/handles">
             <FaDatabase />
