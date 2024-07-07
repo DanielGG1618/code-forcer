@@ -23,8 +23,18 @@ class DBStudentsRepository(IStudentsRepository):
         student = student.lower()
 
         if self.email_exists(student.email):
-            print(f"Student with email {student.email} already exists")
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Student already exists")
+            print(f'Student with email {student.email} already exists')
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f'Student with email {student.email} already exists'
+            )
+
+        if self.handle_exists(student.handle):
+            print(f'Student with handle {student.handle} already exists')
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f'Student with handle {student.handle} already exists'
+            )
 
         self.db_context.execute_command(
             "INSERT INTO students(email, handle) VALUES (?, ?)",
@@ -70,7 +80,10 @@ class DBStudentsRepository(IStudentsRepository):
 
     def update_student(self, email: EmailStr, new_student: Student) -> None:
         if not self.email_exists(email):
-            raise HTTPException(status_code=400, detail="Student does not exist")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail='Student with given email is not found'
+            )
 
         new_student = new_student.lower()
         self.db_context.execute_command(
@@ -81,7 +94,10 @@ class DBStudentsRepository(IStudentsRepository):
 
     def delete_student(self, email: EmailStr) -> None:
         if not self.email_exists(email):
-            raise HTTPException(status_code=400, detail="Student does not exist")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail='Student with given email is not found'
+            )
 
         self.db_context.execute_command(
             "DELETE FROM students WHERE email = ?",
