@@ -21,6 +21,7 @@ def test_contest_map_handles_to_emails():
         is_successful=True,
         passed_test_count=10,
         points=100.0,
+        submission_time_utc=datetime.now(),
         programming_language="Python"
     )
     submission2 = Submission(
@@ -29,6 +30,7 @@ def test_contest_map_handles_to_emails():
         is_successful=False,
         passed_test_count=8,
         points=80.0,
+        submission_time_utc=datetime.now(),
         programming_language="Java"
     )
     submission3 = Submission(
@@ -37,6 +39,7 @@ def test_contest_map_handles_to_emails():
         is_successful=True,
         passed_test_count=5,
         points=50.0,
+        submission_time_utc=datetime.now(),
         programming_language="C++"
     )
 
@@ -72,6 +75,7 @@ def test_contest_select_single_submission_for_each_participant_most_points():
             is_successful=True,
             passed_test_count=10,
             points=100.0,
+            submission_time_utc=datetime.now(),
             programming_language="Python"
         ),
         Submission(
@@ -80,6 +84,7 @@ def test_contest_select_single_submission_for_each_participant_most_points():
             is_successful=False,
             passed_test_count=0,
             points=0.0,
+            submission_time_utc=datetime.now(),
             programming_language="Python"
         ),
         Submission(
@@ -88,6 +93,7 @@ def test_contest_select_single_submission_for_each_participant_most_points():
             is_successful=False,
             passed_test_count=5,
             points=50.0,
+            submission_time_utc=datetime.now(),
             programming_language="Python"
         ),
         Submission(
@@ -96,6 +102,7 @@ def test_contest_select_single_submission_for_each_participant_most_points():
             is_successful=False,
             passed_test_count=0,
             points=0.0,
+            submission_time_utc=datetime.now(),
             programming_language="Python"
         ),
         Submission(
@@ -104,6 +111,7 @@ def test_contest_select_single_submission_for_each_participant_most_points():
             is_successful=False,
             passed_test_count=7,
             points=70.0,
+            submission_time_utc=datetime.now(),
             programming_language="Python"
         ),
     ]
@@ -140,6 +148,7 @@ def test_contest_select_single_submission_for_each_participant_latest_submission
             author=student1,
             is_successful=True,
             passed_test_count=10,
+            submission_time_utc=datetime.now(),
             points=100.0,
             programming_language="Python"
         ),
@@ -149,6 +158,7 @@ def test_contest_select_single_submission_for_each_participant_latest_submission
             is_successful=False,
             passed_test_count=0,
             points=0.0,
+            submission_time_utc=datetime.now(),
             programming_language="Python"
         ),
         Submission(
@@ -157,6 +167,7 @@ def test_contest_select_single_submission_for_each_participant_latest_submission
             is_successful=False,
             passed_test_count=5,
             points=50.0,
+            submission_time_utc=datetime.now(),
             programming_language="Python"
         ),
         Submission(
@@ -165,6 +176,7 @@ def test_contest_select_single_submission_for_each_participant_latest_submission
             is_successful=False,
             passed_test_count=0,
             points=0.0,
+            submission_time_utc=datetime.now(),
             programming_language="Python"
         ),
         Submission(
@@ -173,6 +185,7 @@ def test_contest_select_single_submission_for_each_participant_latest_submission
             is_successful=False,
             passed_test_count=7,
             points=70.0,
+            submission_time_utc=datetime.now(),
             programming_language="Python"
         ),
     ]

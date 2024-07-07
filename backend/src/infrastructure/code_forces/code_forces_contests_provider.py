@@ -7,8 +7,8 @@ from domain.student import Student
 from domain.contest import Contest, Submission, Problem
 from application.contests.contests_provider import IContestsProvider
 from infrastructure.code_forces.enums import CfVerdict
-from infrastructure.code_forces.requests_sending.code_forces_request_sender import (ICodeForcesRequestsSender,
-                                                                                    IAnonymousCodeForcesRequestsSender)
+from infrastructure.code_forces.code_forces_request_sender import (ICodeForcesRequestsSender,
+                                                                   IAnonymousCodeForcesRequestsSender)
 
 
 class CodeForcesContestsProvider(IContestsProvider):
