@@ -68,6 +68,7 @@ class Submission(BaseModel):
     passed_test_count: int
     points: float | None
     programming_language: str
+    submission_time_utc: datetime
 
     def map_author_handle_to_email(self, handle_to_email_mapper: Callable[[str], EmailStr | None]) -> None:
         if self.author.email is None:

@@ -50,7 +50,8 @@ class CodeForcesContestsProvider(IContestsProvider):
                 is_successful=cf_submission.verdict == CfVerdict.OK,
                 passed_test_count=cf_submission.passedTestCount,
                 points=cf_submission.points,
-                programming_language=cf_submission.programmingLanguage
+                programming_language=cf_submission.programmingLanguage,
+                submission_time_utc=datetime.fromtimestamp(cf_submission.creationTimeSeconds, tz=timezone("utc"))
             )
             submissions_by_problem_index[problem_index].append(submission)
 
