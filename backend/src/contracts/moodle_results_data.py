@@ -1,18 +1,17 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from datetime import datetime, timedelta
 
+from pydantic import BaseModel, EmailStr
 
-@dataclass
-class MoodleResultsData:
+
+class MoodleResultsData(BaseModel):
     contest: ContestData
-    legally_excused: list[str]
+    legally_excused: list[EmailStr]
     late_submission_rules: LateSubmissionRulesData
 
 
-@dataclass
-class ContestData:
+class ContestData(BaseModel):
     id: int
     name: str
     start_time_utc: datetime
@@ -20,8 +19,7 @@ class ContestData:
     problems: list[ProblemData]
 
 
-@dataclass
-class ProblemData:
+class ProblemData(BaseModel):
     name: str
     index: str
     max_points: int | None
@@ -29,16 +27,14 @@ class ProblemData:
     submissions: list[SubmissionData]
 
 
-@dataclass
-class SubmissionData:
+class SubmissionData(BaseModel):
     id: int
-    author_email: str
+    author_email: EmailStr
     is_successful: bool
     passed_test_count: int
     points: int | None
     programming_language: str
 
 
-@dataclass
-class LateSubmissionRulesData:
+class LateSubmissionRulesData(BaseModel):
     pass

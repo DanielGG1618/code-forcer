@@ -1,7 +1,6 @@
-from dataclasses import dataclass
+from pydantic import BaseModel, EmailStr
 
 
-@dataclass
-class StudentData:
-    email: str
+class StudentData(BaseModel):
+    email: EmailStr
     handle: str
