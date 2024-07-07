@@ -14,6 +14,10 @@ class IStudentsRepository(ABC):
         pass
 
     @abstractmethod
+    def get_all_students(self) -> list[Student]:
+        pass
+
+    @abstractmethod
     def get_student_by_handle(self, handle: str) -> Student:
         pass
 
@@ -23,4 +27,16 @@ class IStudentsRepository(ABC):
 
     @abstractmethod
     def delete_student(self, email: EmailStr) -> None:
+        pass
+
+    @abstractmethod
+    def email_exists(self, email: EmailStr) -> bool:
+        pass
+
+    @abstractmethod
+    def handle_exists(self, handle: str) -> bool:
+        pass
+
+    @abstractmethod
+    def student_exists(self, student: Student) -> bool:
         pass

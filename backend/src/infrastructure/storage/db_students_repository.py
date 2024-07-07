@@ -32,6 +32,16 @@ class DBStudentsRepository(IStudentsRepository):
         )
         self.db_context.commit()
 
+    def get_all_students(self) -> list[Student]:
+        result = self.db_context.execute_command(
+            "SELECT email, handle FROM students"
+        ).fetchall()
+
+        return [
+            Student(email=email, handle=handle)
+            for email, handle in result
+        ]
+
     def get_student_by_email(self, email: EmailStr) -> Student | None:
         result = self.db_context.execute_command(
             "SELECT email, handle FROM students WHERE email = ?",

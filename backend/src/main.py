@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, status
+from fastapi import FastAPI, UploadFile, File, status, Response
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from uvicorn import run
@@ -49,9 +49,9 @@ async def create_student(student_data: StudentData) -> Student | None:
     return container[StudentsService].create_student(student_data)
 
 
-@app.post("/students/file", status_code=status.HTTP_201_CREATED)
-async def create_students_from_file(file: UploadFile = File(...)) -> list[Student]:
-    return container[StudentsService].create_students_from_file(file)
+@app.get("/students", status_code=status.HTTP_200_OK)
+async def get_all_students() -> list[Student]:
+    return container[StudentsService].get_all_students()
 
 
 @app.get("/students/{email_or_handle}", status_code=status.HTTP_200_OK)
@@ -59,9 +59,21 @@ async def get_student_by_email_or_handle(email_or_handle: str) -> Student:
     return container[StudentsService].get_student_by_email_or_handle(email_or_handle)
 
 
-@app.put("/students/{email}", status_code=status.HTTP_204_NO_CONTENT)
-async def update_student(email: str, updated_student_data: StudentData) -> None:
-    container[StudentsService].update_student(email, updated_student_data)
+@app.put("/students/{email}")
+async def update_or_create_student(email: str, updated_student_data: StudentData, response: Response) -> Student | None:
+    result = container[StudentsService].update_or_create_student(email, updated_student_data)
+
+    if result is None:
+        response.status_code = status.HTTP_204_NO_CONTENT
+        return None
+
+    response.status_code = status.HTTP_201_CREATED
+    return result
+
+
+@app.put("/students/file", status_code=status.HTTP_201_CREATED)
+async def update_or_create_students_from_file(file: UploadFile = File(...)) -> list[Student]:
+    return container[StudentsService].update_or_create_students_from_file(file)
 
 
 @app.delete("/students/{email}", status_code=status.HTTP_204_NO_CONTENT)

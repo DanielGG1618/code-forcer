@@ -28,7 +28,7 @@ class StudentsService:
 
         return student
 
-    def create_students_from_file(self, file: UploadFile) -> list[Student]:
+    def update_or_create_students_from_file(self, file: UploadFile) -> list[Student]:
         file_location = f"temp_{file.filename}"
         with open(file_location, "wb+") as file_object:
             file_object.write(file.file.read())
@@ -37,12 +37,17 @@ class StudentsService:
 
         if path.exists(file_location):
             remove(file_location)
+            
+        return filter(
+            lambda student: student is not None, [
+                self.update_or_create_student(student_data.email, student_data)
+                for student_data
+                in students_data
+            ]
+        )
 
-        return [
-            self.create_student(student_data)
-            for student_data
-            in students_data
-        ]
+    def get_all_students(self) -> list[Student]:
+        return self.students_repository.get_all_students()
 
     def get_student_by_email_or_handle(self, email_or_handle: str) -> Student:
         if validate_email(email_or_handle):
@@ -55,9 +60,19 @@ class StudentsService:
 
         return response
 
-    def update_student(self, email: str, updated_student_data: StudentData) -> None:
-        student = student_data_to_student(updated_student_data)
-        self.students_repository.update_student(email, student)
+    def update_or_create_student(self, email: str, student_data: StudentData) -> Student | None:
+        if email != student_data.email:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email from URL should match email from reqeust body"
+            )
+
+        if self.students_repository.email_exists(email):
+            student = student_data_to_student(student_data)
+            self.students_repository.update_student(email, student)
+            return None
+
+        return self.create_student(student_data)
 
     def delete_student(self, email: str) -> None:
         self.students_repository.delete_student(email)
