@@ -23,3 +23,8 @@ pytest:
     - pip install pytest
   script:
     - pytest backend/src/tests/
+
+# Exclude changes to README.md from triggering the pipeline
+# The pipeline will not run if only changes to README.md are made
+except:
+  - /^README\.md$/
