@@ -74,4 +74,4 @@ front_deploy:
     - cp -a dist/. public/.
   artifacts:
     paths:
-      - frontned/public
+      - frontend/public
