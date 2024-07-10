@@ -1,77 +1,19 @@
 stages:
-  - build
-  - lint
   - test
-  - deploy
+  - delivery
 
-pylint:
-  stage: lint
-  image: python:3.12
-  variables:
-    PYTHONPATH: "${PYTHONPATH}:backend/src"
-  before_script:
-    - pip install -r backend/src/requirements.txt
-    - pip install pylint
-  script:
-    - pylint backend/src --disable=C0114,C0116,R0903,C0115,C0103 --max-line-length=120
-  except:
-    changes:
-      - README.md
-
-pytest:
+test python:
   stage: test
-  image: python:3.12
-  variables:
-    PYTHONPATH: "${PYTHONPATH}:backend/src"
-  before_script:
-    - pip install -r backend/src/requirements.txt
-    - pip install pytest
   script:
-    - pytest backend/src/tests/
-  except:
-    changes:
-      - README.md
+    - docker compose -f docker/test/docker-compose.yml down
+    - docker compose -f docker/test/docker-compose.yml build codeforcer
+    - docker compose -f docker/test/docker-compose.yml up --abort-on-container-exit
 
-font_build:
-  stage: build
-  image: node:20
-  before_script:
-    - cd frontend/
-    - npm install
+delivery-job:
+  stage: delivery
+  dependencies:
+    - test python
   script:
-    - npm run build
-  except:
-    changes:
-      - README.md
-
-front_lint:
-  stage: lint
-  image: node:20
-  before_script:
-    - cd frontend/
-    - npm install
-  script:
-    - npm run lint
-  except:
-    changes:
-      - README.md
-
-front_deploy:
-  image: node:20
-  stage: deploy
-  cache:
-    key:
-      files:
-        - frontend/package-lock.json
-      prefix: npm
-    paths:
-      - frontend/node_modules/
-  before_script:
-    - cd frontend/
-  script:
-    - npm install
-    - npm run build
-    - cp -a dist/. public/.
-  artifacts:
-    paths:
-      - frontend/public
+    - docker login -p $DOCKER_REGISTRY_KEY -u $DOCKER_REGISTRY_USER mashfeii
+    - docker tag codeforcer:test $CI_REGISTRY_IMAGE
+    - docker push $CI_REGISTRY_IMAGE
