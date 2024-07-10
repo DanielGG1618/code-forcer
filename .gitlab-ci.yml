@@ -62,14 +62,14 @@ front_deploy:
   cache:
     key:
       files:
-        - package-lock.json
+        - frontend/package-lock.json
       prefix: npm
     paths:
-      - node_modules/
+      - frontend/node_modules/
   script:
     - npm install
     - npm run build
-    - cp -a dist/. public/
+    - cp -a frontned/dist/. frontend/public/
   artifacts:
     paths:
-      - public
+      - frontned/public
