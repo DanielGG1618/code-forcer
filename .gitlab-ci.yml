@@ -48,6 +48,4 @@ deploy:
   tags: 
     - server-runner
   script:
-    - apt install -y python-pip
-    - pip install docker-compose
     - docker-compose up -d --build
