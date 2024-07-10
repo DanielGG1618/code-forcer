@@ -1,19 +1,16 @@
 import { useForm } from "react-hook-form";
 import Form from "../../ui/Form";
 import Heading from "../../ui/Heading";
-import FileInput from "../../ui/FileInput";
 import Input from "../../ui/Input";
 import Button from "../../ui/Button";
 import FormElement from "../../ui/FormElement";
-import styled from "styled-components";
-import { uploadHandlesFile, uploadSingleHandle } from "../../api/handles";
+import { uploadSingleHandle } from "../../api/handles";
 import { useNavigation } from "react-router-dom";
 import { useState } from "react";
 import SpinnerMini from "../../ui/SpinnnerMini";
 import toast from "react-hot-toast";
 
 export default function jormHandleUpdate() {
-  const navigation = useNavigation();
   const {
     register,
     handleSubmit,
@@ -22,13 +19,14 @@ export default function jormHandleUpdate() {
   } = useForm();
 
   const [isGetting, setIsGetting] = useState(false);
-  const onSubmit = function (data) {
+  const onSubmit = function(data) {
     setIsGetting(true);
     data.handle = data.handle.trim();
     data.email = data.email.trim();
 
     uploadSingleHandle(data)
       .then((res) => {
+        console.log(res);
         toast.success("Successfully created!");
         reset();
       })
