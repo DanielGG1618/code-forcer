@@ -1,7 +1,7 @@
 version: "3.9"
 
 services:
-  codeforcer:
+  codeforcer_python:
     container_name: codeforcer_python
     build:
       context: ../../backend/src
