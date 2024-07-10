@@ -45,6 +45,9 @@ front_lint:
 deploy:
   stage: deploy 
   when: manual
+  dependencies:
+    - test
+    - lint
   tags: 
     - server-runner
   script:
