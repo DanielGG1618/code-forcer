@@ -2,17 +2,18 @@ stages:
   - build
   - lint
   - test
+  - deploy
 
 pylint:
   stage: lint
   image: python:3.12
   variables:
-    PYTHONPATH: "${PYTHONPATH}:backend/src" 
+    PYTHONPATH: "${PYTHONPATH}:backend/src"
   before_script:
     - pip install -r backend/src/requirements.txt
     - pip install pylint
   script:
-     - pylint backend/src --disable=C0114,C0116,R0903,C0115,C0103 --max-line-length=120
+    - pylint backend/src --disable=C0114,C0116,R0903,C0115,C0103 --max-line-length=120
   except:
     changes:
       - README.md
@@ -21,7 +22,7 @@ pytest:
   stage: test
   image: python:3.12
   variables:
-     PYTHONPATH: "${PYTHONPATH}:backend/src"
+    PYTHONPATH: "${PYTHONPATH}:backend/src"
   before_script:
     - pip install -r backend/src/requirements.txt
     - pip install pytest
@@ -54,3 +55,21 @@ front_lint:
   except:
     changes:
       - README.md
+
+front_deploy:
+  image: node:20
+  stage: deploy
+  cache:
+    key:
+      files:
+        - package-lock.json
+      prefix: npm
+    paths:
+      - node_modules/
+  script:
+    - npm install
+    - npm run build
+    - cp -a dist/. public/
+  artifacts:
+    paths:
+      - public
