@@ -1,8 +1,8 @@
 services:
   codeforcer:
-    container_name: codeforcer_python
+    container_name: codeforcer
     build:
       context: ../../backend/src
       dockerfile: ./Dockerfile
     command: >
-      bash -c "pip install pytest && pytest /tests"
+      bash -c "pip install pytest && pytest code/tests/"
