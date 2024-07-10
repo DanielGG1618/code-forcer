@@ -51,5 +51,7 @@ deploy:
     - front_lint
   tags: 
     - server-runner
+  before_script:
+    - docker-compose down
   script:
     - docker-compose up -d --build
