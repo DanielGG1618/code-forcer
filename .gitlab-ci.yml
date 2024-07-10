@@ -45,17 +45,7 @@ front_lint:
 deploy:
   stage: deploy 
   when: manual
-  before_script:
-    - command -v ssh-agent >/dev/null || ( apt update -qq && apt add openssh-client -qq)
-    - eval $(ssh-agent -s)
-    - chmod 400 "$SSH_PRIVATE_KEY"
-    - ssh-add "$SSH_PRIVATE_KEY"
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - mkdir -p ~/.ssh && touch ~/.ssh/known_hosts
-    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
-    - export $(grep -v '^#' .env | xargs -0)
-    - apt update -qq && apt add -qq openssh-client
   script:
-    - ssh root@10.90.138.143
-    - docker compose up -d --build
+    - sudo apt-get install -y python-pip
+    - pip install docker-compose
+    - docker-compose up -d --build
