@@ -1,26 +1,26 @@
 stages:
   - lint
   - test
+  - deploy
 
 pylint:
   stage: lint
   image: python:3.12
   variables:
-    PYTHONPATH: "${PYTHONPATH}:backend/src" 
+    PYTHONPATH: "${PYTHONPATH}:backend/src"
   before_script:
     - pip install -r backend/src/requirements.txt
     - pip install pylint
   script:
-     - pylint backend/src --disable=C0114,C0116,R0903,C0115,C0103 --max-line-length=120
+    - pylint backend/src --disable=C0114,C0116,R0903,C0115,C0103 --max-line-length=120
   except:
     changes:
       - README.md
-
 pytest:
   stage: test
   image: python:3.12
   variables:
-     PYTHONPATH: "${PYTHONPATH}:backend/src"
+    PYTHONPATH: "${PYTHONPATH}:backend/src"
   before_script:
     - pip install -r backend/src/requirements.txt
     - pip install pytest
@@ -29,3 +29,31 @@ pytest:
   except:
     changes:
       - README.md
+
+front_lint:
+  stage: lint
+  image: node:20
+  before_script:
+    - cd frontend/
+    - npm install
+  script:
+    - npm run lint
+  except:
+    changes:
+      - README.md
+
+deploy:
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  stage: deploy
+  when: manual
+  dependencies:
+    - pylint
+    - pytest
+    - front_lint
+  tags:
+    - server-runner
+  before_script:
+    - docker compose down
+  script:
+    - docker compose up -d --build

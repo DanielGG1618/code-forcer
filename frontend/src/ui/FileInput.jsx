@@ -1,5 +1,4 @@
 import styled, { css } from "styled-components";
-import { forwardRef } from "react";
 
 const FileInputElement = styled.input.attrs({ type: "file" })`
   display: none;

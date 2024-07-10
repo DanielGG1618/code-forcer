@@ -1,0 +1,26 @@
+services:
+  back:
+    container_name: back
+    build:
+      context: ./backend/src/
+      dockerfile: ./Dockerfile
+    restart: always
+    ports:
+      - 8000:8000
+    expose:
+      - 8000
+
+  web:
+    container_name: web
+    env_file:
+      - frontend/.env
+    build:
+      context: ./frontend/
+      dockerfile: ./Dockerfile
+    restart: always
+    depends_on:
+      - back
+    ports:
+      - 3000:3000
+    expose:
+      - 3000

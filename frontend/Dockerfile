@@ -1,20 +1,12 @@
-FROM node:18
+FROM node:18.20.4-slim AS build
 
 WORKDIR /app
-
-COPY package*.json ./
-
-RUN npm install
-
+COPY package.json .
+RUN npm i --silent
 COPY . .
-
 RUN npm run build
 
-# Use nginx to serve the build files
-FROM nginx:alpine
-COPY --from=0 /app/dist /usr/share/nginx/html
-
-EXPOSE 80
-
-# Start nginx
+FROM nginx:stable-alpine
+COPY --from=build /app/dist /usr/share/nginx/html
+COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
 CMD ["nginx", "-g", "daemon off;"]

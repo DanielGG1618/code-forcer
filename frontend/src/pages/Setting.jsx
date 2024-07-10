@@ -29,7 +29,8 @@ function Settings() {
       </Heading>
       <Description>
         <p>
-          On this page you can upload the participants' results in .csv file
+          On this page you can upload the participants&apos; results in .csv
+          file
           <br />
           To do this, specify the maximum number of points for each task <br />
         </p>
