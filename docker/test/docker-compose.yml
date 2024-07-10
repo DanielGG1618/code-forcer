@@ -4,7 +4,6 @@ services:
   codeforcer_project:
     container_name: codeforcer
     image: codeforcer:latest
-    container_name: back
     build:
       context: ../../backend/src
     command: >
