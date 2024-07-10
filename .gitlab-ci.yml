@@ -6,7 +6,7 @@ test python:
   stage: test
   script:
     - docker compose -f docker/test/docker-compose.yml down
-    - docker compose -f docker/test/docker-compose.yml build codeforcer_python
+    - docker compose -f docker/test/docker-compose.yml build codeforcer
     - docker compose -f docker/test/docker-compose.yml up --abort-on-container-exit
 
 delivery-job:
