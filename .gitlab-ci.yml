@@ -1,19 +1,61 @@
 stages:
+  - lint
   - test
-  - delivery
+  - deploy
 
-test python:
+pylint:
+  stage: lint
+  image: python:3.12
+  variables:
+    PYTHONPATH: "${PYTHONPATH}:backend/src"
+  before_script:
+    - pip install -r backend/src/requirements.txt
+    - pip install pylint
+  script:
+    - pylint backend/src --disable=C0114,C0116,R0903,C0115,C0103 --max-line-length=120
+  except:
+    changes:
+      - README.md
+pytest:
   stage: test
+  image: python:3.12
+  variables:
+    PYTHONPATH: "${PYTHONPATH}:backend/src"
+  before_script:
+    - pip install -r backend/src/requirements.txt
+    - pip install pytest
   script:
-    - docker compose -f docker/test/docker-compose.yml down
-    - docker compose -f docker/test/docker-compose.yml build codeforcer
-    - docker compose -f docker/test/docker-compose.yml up --abort-on-container-exit
+    - pytest backend/src/tests/
+  except:
+    changes:
+      - README.md
 
-delivery-job:
-  stage: delivery
-  dependencies:
-    - test python
+front_lint:
+  stage: lint
+  image: node:20
+  before_script:
+    - cd frontend/
+    - npm install
   script:
-    - echo "$DOCKER_HUB_PASSWORD" | docker login --username $DOCKER_HUB_LOGIN --password-stdin
-    - docker tag codeforcer:test $CI_REGISTRY_IMAGE
-    - docker push $CI_REGISTRY_IMAGE
+    - npm run lint
+  except:
+    changes:
+      - README.md
+
+deploy:
+  stage: deploy 
+  when: manual
+  before_script:
+    - command -v ssh-agent >/dev/null || ( apk update -qq && apk add openssh-client -qq)
+    - eval $(ssh-agent -s)
+    - chmod 400 "$SSH_PRIVATE_KEY"
+    - ssh-add "$SSH_PRIVATE_KEY"
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - mkdir -p ~/.ssh && touch ~/.ssh/known_hosts
+    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+    - export $(grep -v '^#' .env | xargs -0)
+    - apk update -qq && apk add -qq openssh-client
+  script:
+    - ssh root@10.90.138.143
+    - docker compose up -d --build
