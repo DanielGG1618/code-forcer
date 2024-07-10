@@ -71,7 +71,7 @@ front_deploy:
   script:
     - npm install
     - npm run build
-    - cp -a frontned/dist/. frontend/public/
+    - cp -a dist/. public/
   artifacts:
     paths:
       - frontned/public
