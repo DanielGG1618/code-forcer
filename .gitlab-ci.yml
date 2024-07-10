@@ -45,7 +45,9 @@ front_lint:
 deploy:
   stage: deploy 
   when: manual
+  tags: 
+    - server-runner
   script:
-    - sudo apt-get install -y python-pip
+    - apt install -y python-pip
     - pip install docker-compose
     - docker-compose up -d --build
