@@ -3,10 +3,8 @@ version: "3.9"
 services:
   codeforcer_project:
     container_name: codeforcer
-    image: codeforcer:latest
     build:
       context: ../../backend/src
+      dockerfile: ./Dockerfile
     command: >
       bash -c "pip install pytest && pytest backend/src/tests/"
-
-# dockerfile: ./Dockerfile
