@@ -7,4 +7,4 @@ services:
       context: ../../backend/src
       dockerfile: ./Dockerfile
     command: >
-      bash -c "pip install pytest && pytest backend/src/tests/"
+      bash -c "pip install pytest && pytest /code/tests"
