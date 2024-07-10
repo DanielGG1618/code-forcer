@@ -46,8 +46,9 @@ deploy:
   stage: deploy 
   when: manual
   dependencies:
-    - test
-    - lint
+    - pylint
+    - pytest
+    - front_lint
   tags: 
     - server-runner
   script:
