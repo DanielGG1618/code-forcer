@@ -5,12 +5,11 @@ import Input from "../../ui/Input";
 import Button from "../../ui/Button";
 import FormElement from "../../ui/FormElement";
 import { uploadSingleHandle } from "../../api/handles";
-import { useNavigation } from "react-router-dom";
 import { useState } from "react";
 import SpinnerMini from "../../ui/SpinnnerMini";
 import toast from "react-hot-toast";
 
-export default function jormHandleUpdate() {
+export default function FormHandleUpdate() {
   const {
     register,
     handleSubmit,

@@ -35,7 +35,7 @@ const Box = styled.div`
   }
 `;
 
-function ErrorFallback({}) {
+function ErrorFallback() {
   const error = useRouteError();
   const moveBack = useMoveBack();
 

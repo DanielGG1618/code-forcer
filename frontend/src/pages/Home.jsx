@@ -2,7 +2,7 @@ import Row from "../ui/Row.jsx";
 import Heading from "../ui/Heading.jsx";
 import Card from "../ui/Card.jsx";
 import { HiHome } from "react-icons/hi2";
-import { SiMoodle, SiCodeforces } from "react-icons/si";
+import { SiCodeforces } from "react-icons/si";
 import { FaDatabase } from "react-icons/fa6";
 import { Description } from "../ui/Description.jsx";
 
