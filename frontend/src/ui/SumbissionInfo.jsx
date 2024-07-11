@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import Heading from "./Heading.jsx";
@@ -55,20 +55,25 @@ const Description = styled.div`
 
 const List = styled.form`
   margin: 0 auto;
-  max-width: 60rem;
 `;
 const Item = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  padding-bottom: 2rem;
+  padding: 3rem 4rem;
   column-gap: 0.8rem;
+  background-color: var(--color-brand-50);
 
   font-weight: 400;
 
-  &:not(:last-child) {
-    margin-bottom: 2rem;
-    border-bottom: 1px solid var(--color-grey-200);
+  &:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -1rem;
+    width: 100%;
+    height: 1px;
+    background-color: var(--color-grey-200);
   }
 
   strong {
@@ -84,6 +89,12 @@ const Item = styled.div`
   > input:not(:last-child) {
     margin-bottom: 0.2rem;
   }
+
+  ${(props) =>
+    props.undefined.length > 0 &&
+    css`
+      background-color: var(--color-yellow-100);
+    `}
 `;
 
 const ItemRow = styled.div`
@@ -201,7 +212,7 @@ function SumbissionsInfo({ info }) {
 
   const [isGetting, setIsGetting] = useState(false);
 
-  const onSubmit = function (data) {
+  const onSubmit = function(data) {
     setIsGetting(true);
 
     handlePostRequest(definedUsers, data)
@@ -276,7 +287,7 @@ function SubmissionItem({ index, item, children }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <Item>
+    <Item undefined={undefinedUsers}>
       {children}
       <ItemRow>
         <span>

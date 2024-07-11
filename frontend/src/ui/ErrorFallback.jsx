@@ -45,7 +45,7 @@ function ErrorFallback() {
       <StyledErrorFallback>
         <Box>
           <Heading as="h1">Something went wrong 🤔</Heading>
-          <p>{error.statusText || error.message}</p>
+          <p>{error.message || error.statusText}</p>
           <Button size="large" onClick={moveBack}>
             Try again!
           </Button>

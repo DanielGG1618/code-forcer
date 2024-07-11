@@ -19,6 +19,14 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    volumes:
-      - /app/node_modules
-      - ./frontend:/app
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./frontend
+          target: /usr/share/nginx/html
+          ignore:
+            - nginx/
+            - node_modules/
+        - action: sync+restart
+          path: ./frontend/nginx/nginx.conf
+          target: /etc/nginx/conf.d/default.confolumes
