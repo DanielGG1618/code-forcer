@@ -69,38 +69,38 @@ class CodeForcesRequestsSender(ICodeForcesRequestsSender, IAnonymousCodeForcesRe
         hasher.update(f"{rand}/{method_name}?{params_str}#{self.secret}".encode())
         api_sig = str(rand) + hasher.hexdigest()
 
-        response = get(self.API_URL + method_name, params | {"apiSig": api_sig})
+        response = get(self.API_URL + method_name, params | {"apiSig": api_sig}, timeout=5)
 
         return self._process_response(response)
 
     def _send_anonymous_request(self, method_name: str, **params: int | str | bool):
-        response = get(self.API_URL + method_name, params=params)
+        response = get(self.API_URL + method_name, timeout=5, params=params)
 
         return self._process_response(response)
 
     @staticmethod
     def _process_response(response: Response):
         try:
-            responseJson = response.json()
-        except JSONDecodeError:
+            response_json = response.json()
+        except JSONDecodeError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="CodeForces API does not respond"
+            ) from exc
+
+        if response_json["status"] is None:
             raise HTTPException(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
                 detail="CodeForces API does not respond"
             )
 
-        if responseJson["status"] is None:
-            raise HTTPException(
-                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail="CodeForces API does not respond"
-            )
-
-        if responseJson["status"] == "FAILED":
+        if response_json["status"] == "FAILED":
             raise HTTPException(
                 status_code=response.status_code,
-                detail=f"CodeForces API: {responseJson["comment"]}"
+                detail=f"CodeForces API: {response_json['comment']}"
             )
 
-        return responseJson["result"]
+        return response_json["result"]
 
 
 def get_contest_from_data(contest_data: dict) -> CfContest:
