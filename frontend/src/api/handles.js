@@ -1,6 +1,5 @@
-const uri = import.meta.env.VITE_API_URL;
 export async function uploadHandlesFile(file) {
-  const url = `${uri}/students/file`;
+  const url = `/students/file`;
 
   const response = await fetch(url, {
     method: "POST",
@@ -10,7 +9,7 @@ export async function uploadHandlesFile(file) {
   return response;
 }
 export async function uploadSingleHandle(info) {
-  const url = `${uri}/students/${info.email}`;
+  const url = `/students/${info.email}`;
 
   const response = await fetch(url, {
     method: "PUT",

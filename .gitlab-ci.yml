@@ -9,7 +9,7 @@ pylint:
   variables:
     PYTHONPATH: "${PYTHONPATH}:backend"
   before_script:
-    - pip install -r backend/src/requirements.txt
+    - pip install -r backend/requirements.txt
     - pip install pylint
   script:
      - pylint backend --disable=C0114,C0116,R0903,C0115,C0103 --max-line-length=120
@@ -44,8 +44,6 @@ front_lint:
       - README.md
 
 deploy:
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   stage: deploy
   when: manual
   dependencies:

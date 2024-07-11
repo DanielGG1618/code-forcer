@@ -1,6 +1,5 @@
-const uri = import.meta.env.VITE_API_URL;
 export async function getContest(contestID, APIKey, secretKey) {
-  const url = `${uri}/contests/${contestID}?key=${APIKey}&secret=${secretKey}`;
+  const url = `/contests/${contestID}?key=${APIKey}&secret=${secretKey}`;
 
   const response = await fetch(url);
 
@@ -12,7 +11,7 @@ export async function getContest(contestID, APIKey, secretKey) {
   return data;
 }
 export async function handlePostRequest(info, data) {
-  const url = `${uri}/moodle_grades`;
+  const url = `/moodle_grades`;
   const body = {
     contest: {
       ...info,
