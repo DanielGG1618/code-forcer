@@ -1,4 +1,4 @@
-from typing import TypeVar, Callable, Hashable
+from typing import TypeVar, Callable
 
 T = TypeVar("T")
 
@@ -6,10 +6,10 @@ T = TypeVar("T")
 class DependenciesContainer:
     dependencies: dict[type, Callable[[], T] | T] = {}
 
-    def __setitem__(self, key: type[T] | Hashable, dependency: Callable[[], T] | T):
+    def __setitem__(self, key: type[T], dependency: Callable[[], T] | T):
         self.dependencies[key] = dependency
 
-    def __getitem__(self, key: type[T] | Hashable) -> T:
+    def __getitem__(self, key: type[T]) -> T:
         if key in self.dependencies:
             dependency = self.dependencies[key]
             return dependency() if callable(dependency) else dependency
@@ -21,7 +21,7 @@ class DependenciesContainer:
                 raise KeyError(f"Dependency for {key} is not set")
 
         elif isinstance(key, str):
-            for cls_key in self.dependencies.keys():
+            for cls_key in self.dependencies:
                 if cls_key.__name__ == key:
                     key = cls_key
                     break
