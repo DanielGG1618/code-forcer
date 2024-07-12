@@ -4,7 +4,7 @@ from application.contests.contests_service import temp_most_passed_test_count_se
 
 from datetime import datetime, timedelta
 
-from tests.domain_tests.data_generation import fake
+from tests.contests_test.data_generation import fake
 
 
 def test_contest_map_handles_to_emails():
