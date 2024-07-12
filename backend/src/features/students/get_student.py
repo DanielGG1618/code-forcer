@@ -1,5 +1,5 @@
-from email_validator import validate_email
 from fastapi import HTTPException, status, APIRouter
+from validate_email import validate_email
 
 from src.container import container
 from .interfaces import IStudentsRepository
