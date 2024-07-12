@@ -51,11 +51,11 @@ const FileInputButton = styled.span`
   }
 `;
 
-function FileInput({ edited, text, register, accept }) {
+function FileInput({ edited, text, register, accept, disabled }) {
   return (
     <FileInputLabel edited={edited}>
       <FileInputText>{text}</FileInputText>
-      <FileInputElement accept={accept} {...register} />
+      <FileInputElement accept={accept} {...register} disabled={disabled} />
       <FileInputButton>Browse</FileInputButton>
     </FileInputLabel>
   );

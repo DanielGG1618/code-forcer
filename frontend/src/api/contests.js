@@ -44,10 +44,8 @@ export async function handlePostRequest(info, data) {
 
   console.log("Server answer for file generating", response);
 
-  if (response.status >= 500) {
-    throw new Error("Something went wrong with CodeForces");
-  } else if (!response.ok) {
-    throw new Error("Something went wrong!");
+  if (!response.ok) {
+    throw new Error(response.statusText);
   }
   return response;
 }

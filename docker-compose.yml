@@ -20,20 +20,15 @@ services:
       - back
     ports:
       - "80:80"
-      - "443:443"
     develop:
       watch:
-        - action: sync+restart
-          path: ./frontend
+        - action: rebuild
+          path: ./frontend/
           target: /usr/share/nginx/html
           ignore:
-            - nginx/
             - node_modules/
-        - action: sync+restart
-          path: ./frontend/nginx/nginx.conf
-          target: /etc/nginx/conf.d/default.confolumes
+            - dist/
 
 volumes:
   db:
     driver: local
-

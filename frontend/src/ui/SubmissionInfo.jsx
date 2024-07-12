@@ -7,10 +7,9 @@ import { BsFillArrowLeftSquareFill } from "react-icons/bs";
 import { useForm } from "react-hook-form";
 import Button from "./Button.jsx";
 import SpinnerMini from "./SpinnnerMini.jsx";
-import { useMoveBack } from "../hooks/useMoveBack.js";
 import { handlePostRequest } from "../api/contests.js";
 import { useLocalStorageState } from "../hooks/useLocalStorage.js";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const StyledCover = styled.div`
   position: relative;
@@ -55,6 +54,15 @@ const Description = styled.div`
 
 const List = styled.form`
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+
+  button {
+    align-self: center;
+    padding-left: 8rem;
+    padding-right: 8rem;
+  }
 `;
 const Item = styled.div`
   position: relative;
@@ -62,19 +70,10 @@ const Item = styled.div`
   flex-direction: column;
   padding: 3rem 4rem;
   column-gap: 0.8rem;
-  background-color: var(--color-brand-50);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-grey-100);
 
   font-weight: 400;
-
-  &:not(:last-child)::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: -1rem;
-    width: 100%;
-    height: 1px;
-    background-color: var(--color-grey-200);
-  }
 
   strong {
     font-weight: 500;
@@ -91,9 +90,9 @@ const Item = styled.div`
   }
 
   ${(props) =>
-    props.undefined.length > 0 &&
+    parseInt(props.undefined) > 0 &&
     css`
-      background-color: var(--color-yellow-100);
+      border: 1px solid var(--color-yellow-700);
     `}
 `;
 
@@ -171,7 +170,7 @@ const UndefinedDescription = styled.p`
   }
 `;
 
-function SumbissionsInfo({ info }) {
+function SubmissionsInfo({ info }) {
   const definedUsers = {
     ...info,
     problems: info.problems.map((item) => {
@@ -186,9 +185,9 @@ function SumbissionsInfo({ info }) {
   const unpossibleReqest = definedUsers.problems.every(
     (item) => item.submissions.length === 0,
   );
-  console.log(unpossibleReqest);
 
-  const moveBack = useMoveBack();
+  const navigate = useNavigate();
+
   const [contestPoints, setContestPoints] = useLocalStorageState(
     [],
     `contest-${info.id}`,
@@ -220,8 +219,19 @@ function SumbissionsInfo({ info }) {
         return res.blob();
       })
       .then((blob) => {
-        var file = window.URL.createObjectURL(blob);
-        window.location.assign(file);
+        const url = window.URL.createObjectURL(new Blob([blob]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", `FileName.pdf`);
+
+        // Append to html link element page
+        document.body.appendChild(link);
+
+        // Start download
+        link.click();
+
+        // Clean up and remove the link
+        link.parentNode.removeChild(link);
       })
       .catch((err) => {
         toast.error(err.message);
@@ -233,7 +243,7 @@ function SumbissionsInfo({ info }) {
 
   return (
     <StyledCover>
-      <ButtonBack onClick={moveBack}>
+      <ButtonBack onClick={() => navigate("/submissions")}>
         <BsFillArrowLeftSquareFill />
       </ButtonBack>
       <Heading as="h2">Contest &quot;{info.name}&quot;</Heading>
@@ -287,7 +297,7 @@ function SubmissionItem({ index, item, children }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <Item undefined={undefinedUsers}>
+    <Item undefined={undefinedUsers.length}>
       {children}
       <ItemRow>
         <span>
@@ -320,4 +330,4 @@ function SubmissionItem({ index, item, children }) {
     </Item>
   );
 }
-export default SumbissionsInfo;
+export default SubmissionsInfo;

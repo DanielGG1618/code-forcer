@@ -1,7 +1,7 @@
 import Heading from "../ui/Heading.jsx";
 import { TbSettingsFilled } from "react-icons/tb";
 import { Description } from "../ui/Description.jsx";
-import SumbissionsInfo from "../ui/SumbissionInfo.jsx";
+import SubmissionsInfo from "../ui/SubmissionInfo.jsx";
 import { redirect, useLoaderData } from "react-router-dom";
 import { getContest } from "../api/contests.js";
 
@@ -36,7 +36,7 @@ function Settings() {
         </p>
         <p>You can also copy the list of undefined participants</p>
       </Description>
-      <SumbissionsInfo info={contest} />
+      <SubmissionsInfo info={contest} />
     </>
   );
 }

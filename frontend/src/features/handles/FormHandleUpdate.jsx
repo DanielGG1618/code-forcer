@@ -25,8 +25,7 @@ export default function FormHandleUpdate() {
 
     uploadSingleHandle(data)
       .then((res) => {
-        console.log(res);
-        toast.success("Successfully created!");
+        toast.success(`Successfully ${res.status == 204 ? "updated" : "created"}!`);
         reset();
       })
       .catch((err) => {

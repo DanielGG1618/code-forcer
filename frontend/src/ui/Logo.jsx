@@ -29,7 +29,7 @@ const LogoText = styled.span`
 function Logo() {
   return (
     <StyledLogo to="/">
-      <Img src={"./logo.svg"} alt="The logo of out application" />
+      <Img src="/logo.svg" alt="The logo of out application" />
       <LogoText>CodeForcer</LogoText>
     </StyledLogo>
   );

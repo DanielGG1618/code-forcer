@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import Form from "../../ui/Form";
 import Heading from "../../ui/Heading";
@@ -7,7 +8,8 @@ import Button from "../../ui/Button";
 import FormElement from "../../ui/FormElement";
 import styled from "styled-components";
 import { uploadHandlesFile } from "../../api/handles";
-import { useNavigation } from "react-router-dom";
+import { useState } from "react";
+import SpinnerMini from "../../ui/SpinnnerMini";
 
 const Error = styled.span`
   display: flex;
@@ -18,17 +20,18 @@ const Error = styled.span`
 `;
 
 export default function FormFileUpdate() {
-  const navigation = useNavigation();
   const {
     register,
     handleSubmit,
     watch,
     setError,
+    reset,
     formState: { errors },
   } = useForm();
 
   const watchFileInput = watch("file");
 
+  const [isGetting, setIsGetting] = useState(false);
   function onSubmit({ file, link }) {
     if (file.length === 0 && link.trim().length == 0) {
       setError("neitherItem", {
@@ -37,7 +40,20 @@ export default function FormFileUpdate() {
       });
       return;
     }
-    uploadHandlesFile(file[0]).then((res) => console.log(res));
+    setIsGetting(true);
+    uploadHandlesFile(file[0])
+      .then((res) => {
+        toast.success(
+          `Successfully ${res.status == 204 ? "updated" : "created"}!`,
+        );
+        reset();
+      })
+      .catch((err) => {
+        toast.error(err.message);
+      })
+      .finally(() => {
+        setIsGetting(false);
+      });
   }
 
   return (
@@ -52,17 +68,20 @@ export default function FormFileUpdate() {
           }
           accept={".csv, .xls, .xlsx"}
           register={register("file")}
+          disabled={isGetting}
         />
       </FormElement>
       <FormElement label="Link to Google Sheets">
         <Input
-          disabled={navigation.state !== "idle"}
+          disabled={isGetting}
           placeholder="https://docs.google.com/spreadsheets/..."
           {...register("link")}
         />
       </FormElement>
       {errors.neitherItem && <Error>{errors?.neitherItem.message}</Error>}
-      <Button as="input" type="submit" value="Submit" />
+      <Button disabled={isGetting} type="submit">
+        {isGetting ? <SpinnerMini /> : "Submit"}
+      </Button>
     </Form>
   );
 }
