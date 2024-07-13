@@ -22,9 +22,9 @@ class DBContext(metaclass=SingletonMeta):
 
     def __ensure_students_db_is_created(self) -> None:
         self.execute_command("""
-                CREATE TABLE IF NOT EXISTS students (
+            CREATE TABLE IF NOT EXISTS students (
                 email TEXT PRIMARY KEY,
                 handle TEXT
             );
-            """)
+        """)
         self.commit()
