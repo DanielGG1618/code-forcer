@@ -12,7 +12,7 @@ from .model import Student
 router = APIRouter()
 
 
-@router.put("/students/file", status_code=status.HTTP_201_CREATED)
+@router.patch("/students/file", status_code=status.HTTP_201_CREATED)
 async def update_or_create_students_from_file(file: UploadFile = File(...)) -> list[Student]:
     return UpdateOrCreateStudentsFromFileCommandHandler(
         container[IStudentsRepository],

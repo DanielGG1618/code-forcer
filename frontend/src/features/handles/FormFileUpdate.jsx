@@ -40,11 +40,16 @@ export default function FormFileUpdate() {
       });
       return;
     }
+    let responseStatus;
     setIsGetting(true);
     uploadHandlesFile(file[0])
       .then((res) => {
+        responseStatus = res.status;
+        return res.json();
+      })
+      .then((data) => {
         toast.success(
-          `Successfully ${res.status == 204 ? "updated" : "created"}!`,
+          `Successfully updated ${data.length ? data.length + " items" : ""}`,
         );
         reset();
       })

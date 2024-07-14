@@ -1,9 +1,11 @@
 export async function uploadHandlesFile(file) {
+  const formData = new FormData();
+  formData.append("file", file);
   const url = `/students/file`;
 
   const response = await fetch(url, {
-    method: "PUT",
-    body: file,
+    method: "PATCH",
+    body: formData,
   });
 
   console.log("File uploading response: ", response);
