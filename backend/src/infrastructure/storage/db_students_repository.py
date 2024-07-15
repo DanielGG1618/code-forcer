@@ -78,7 +78,7 @@ class DBStudentsRepository(IStudentsRepository):
         (email, handle) = result
         return Student(email=email, handle=handle)
 
-    def update_student(self, email: EmailStr, new_student: Student) -> None:
+    def update_student_by_email(self, email: EmailStr, new_student: Student) -> None:
         if not self.email_exists(email):
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -89,6 +89,20 @@ class DBStudentsRepository(IStudentsRepository):
         self.db_context.execute_command(
             "UPDATE students SET email = ?, handle = ? WHERE email = ?",
             (new_student.email, new_student.handle, email.lower(), )
+        )
+        self.db_context.commit()
+
+    def update_student_by_handle(self, handle: str, new_student: Student) -> None:
+        if not self.handle_exists(handle):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail='Student with given handle is not found'
+            )
+
+        new_student = new_student.lower()
+        self.db_context.execute_command(
+            "UPDATE students SET email = ?, handle = ? WHERE handle = ?",
+            (new_student.email, new_student.handle, handle.lower(),)
         )
         self.db_context.commit()
 

@@ -1,4 +1,5 @@
 from fastapi import Response, HTTPException, status, APIRouter
+from validate_email import validate_email
 
 from src.container import container
 from src.features.contests.interfaces import IContestsProvider
@@ -8,12 +9,16 @@ from .model import Student
 router = APIRouter()
 
 
-@router.put("/students/{email}")
-async def update_or_create_student(email: str, updated_student: Student, response: Response) -> Student | None:
+@router.put("/students/{email_or_handle}")
+async def update_or_create_student(
+        email_or_handle: str,
+        updated_student: Student,
+        response: Response
+) -> Student | None:
     result = UpdateOrCreateStudentCommandHandler(
         container[IStudentsRepository],
         container[IContestsProvider]
-    ).handle(email, updated_student)
+    ).handle(email_or_handle, updated_student)
 
     if result is None:
         response.status_code = status.HTTP_204_NO_CONTENT
@@ -28,22 +33,44 @@ class UpdateOrCreateStudentCommandHandler:
         self.students_repository = students_repository
         self.contests_provider = contests_provider
 
-    def handle(self, email: str, student: Student) -> Student | None:
-        if email != student.email:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Email from URL should match email from reqeust body"
-            )
+    def handle(self, email_or_handle: str, student: Student) -> Student | None:
+        if validate_email(email_or_handle):
+            email = email_or_handle.lower()
 
-        if not self.contests_provider.validate_handle(student.handle):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail='Handle does not belong to CodeForces user'
-            )
+            if email != student.email:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Email from URL should match email from reqeust body"
+                )
 
-        if self.students_repository.email_exists(email):
-            self.students_repository.update_student(email, student)
-            return None
+            if not self.contests_provider.validate_handle(student.handle):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail='Handle does not belong to CodeForces user'
+                )
+
+            if self.students_repository.email_exists(email):
+                self.students_repository.update_student_by_email(email, student)
+                return None
+
+        else:
+            handle = email_or_handle.lower()
+
+            if handle != student.handle:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Handle from URL should match handle from reqeust body"
+                )
+
+            if not self.contests_provider.validate_handle(student.handle):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail='Handle does not belong to CodeForces user'
+                )
+
+            if self.students_repository.handle_exists(handle):
+                self.students_repository.update_student_by_handle(handle, student)
+                return None
 
         self.students_repository.add_student(student)
         return student

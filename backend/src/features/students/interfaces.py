@@ -22,7 +22,11 @@ class IStudentsRepository(ABC):
         pass
 
     @abstractmethod
-    def update_student(self, email: EmailStr, new_student: Student) -> None:
+    def update_student_by_email(self, email: EmailStr, new_student: Student) -> None:
+        pass
+
+    @abstractmethod
+    def update_student_by_handle(self, handle: str, new_student: Student) -> None:
         pass
 
     @abstractmethod
