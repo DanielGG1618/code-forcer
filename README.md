@@ -1,93 +1,149 @@
-# Code Forcer
+<br />
+<div align="center">
+  <a href="https://gitlab.pg.innopolis.university/code-forcer-ise-5">
+    <img src="assets/logo.svg" alt="Logo" width="80" height="80">
+  </a>
+
+<h3 align="center">CodeForcer</h3>
+
+  <p align="center">
+    Effective and simple tool for uploading grades from CodeForces contests to Moodle
+  </p>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+      <ul>
+        <li>
+          <a href="#built-with">Built With</a>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li>
+          <a href="#installation">Installation</a>
+          <ul>
+            <li>
+              <a href="#run-the-backend-api">Run the backend API</a>
+            </li>
+            <li>
+              <a href="#run-the-web-frontend">Run the web frontent</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <a href="#features">Features</a>
+      <ul>
+        <li>
+          <a href="#backend">Backend</a>
+        </li>
+        <li>
+          <a href="#frontend">Frontend</a>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <a href="#roadmap">Roadmap</a>
+    </li>
+    <li>
+      <a href="#license">License</a>
+    </li>
+  </ol>
+</details>
+
+## About The Project
+<div align="center">
+  <img src="assets/CodeForcer.jpeg" alt="Homepage" width="1024"/>
+</div>
+
+### Built With
+- Frontend: [![React][React.js]][React-url]
+- Backend: [![FastAPI][Fastapi]][Fastapi-url]
+- Containerization: [![Docker][docker]][docker-url]
+- Database: [![SqLite][sqlite]][sqlite-url]
 
 
+## Features
+### Backend 
+- Adding students' handles
+- Downloading CodeForces submissions
+- Editing students' handles
+- Creating .csv file with results of the CodeForces contest that can be uploaded to Moodle
+- Centralized students' handles
+- Application of late submissions policy
 
-## Getting started
+### Frontend 
+- Dark&Light theme
+- Smooth animations
+- Sleek and intuitive design
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+## Getting Started
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+### Installation
 
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+#### Clone this repository
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.pg.innopolis.university/code-forcer-ise-5/code_forcer.git
-git branch -M main
-git push -uf origin main
+git clone https://gitlab.pg.innopolis.university/code-forcer-ise-5/code_forcer.git
 ```
 
-## Integrate with your tools
+#### Install the requirements
+```
+pip install ./backend/src/requirements.txt
+```
 
-- [ ] [Set up project integrations](https://gitlab.pg.innopolis.university/code-forcer-ise-5/code_forcer/-/settings/integrations)
+### Run the backend API
 
-## Collaborate with your team
+Windows
+```
+python ./backend/src/main.py
+```
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+GNU/Linux 
+```
+python3 ./backend/src/main.py
+```
 
-## Test and Deploy
+### Run the web frontend
 
-Use the built-in continuous integration in GitLab.
+You should have Node.js on your machine. To install required version follow this [guide](https://tecadmin.net/install-latest-nodejs-npm-on-linux-mint/).
+After successful installation:
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+```
+cd frontend
+npm i
+npm run build
+```
 
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
 
 ## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+See the [roadmap.sh](https://roadmap.sh/r/codeforcer) for a full list of proposed features (and known issues).
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+## License 
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+Distributed under the MIT License. See `LICENSE` for more information.
 
-## License
-For open source projects, say how it is licensed.
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+[product-screenshot]: https://ibb.co/640xgDW
+[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
+[React-url]: https://reactjs.org/
+[Fastapi]: https://img.shields.io/badge/fastapi-20232A?style=for-the-badge&logo=fastapi&color=04998a&logoColor=ffffff
+[Fastapi-url]: https://fastapi.tiangolo.com/
+[docker]: https://img.shields.io/badge/docker-20232A?style=for-the-badge&logo=docker&logoColor=ffffff&color=0e1756
+[docker-url]: https://www.docker.com/
+[sqlite]: https://img.shields.io/badge/sqlite-20232A?style=for-the-badge&logo=sqlite&logoColor=46a3dc&color=003c58
+[sqlite-url]: https://img.shields.io/badge/sqlite-20232A?style=for-the-badge&logo=sqlite&logoColor=46a3dc&color=003c58
+

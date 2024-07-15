@@ -14,6 +14,13 @@ const Heading = styled.h1`
       height: 3rem;
       margin-bottom: 0.2rem;
     }
+    @media (max-width: 567.98px) {
+      & svg {
+        flex: 0 0 2.4rem;
+        width: 2.4rem;
+        height: 2.4rem;
+      }
+    }
   }
   ${(props) =>
     props.as === "h1" &&
@@ -21,6 +28,15 @@ const Heading = styled.h1`
       font-size: 3rem;
       font-weight: 600;
       letter-spacing: 0.02em;
+
+      @media (max-width: 567.98px) {
+        font-size: 2.4rem;
+        & svg {
+          flex: 0 0 2.4rem;
+          width: 2.4rem;
+          height: 2.4rem;
+        }
+      }
     `}
   ${(props) =>
     props.as === "h2" &&
@@ -31,7 +47,7 @@ const Heading = styled.h1`
   ${(props) =>
     props.as === "h3" &&
     css`
-      font-size: 2rem;
+      font-size: 1.7rem;
       font-weight: 500;
     `}
   ${(props) =>

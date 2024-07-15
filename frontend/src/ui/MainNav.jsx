@@ -1,13 +1,35 @@
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
 import { HiHome } from "react-icons/hi2";
-import { SiMoodle, SiCodeforces } from "react-icons/si";
+import { SiCodeforces } from "react-icons/si";
 import { FaDatabase } from "react-icons/fa6";
+import { useEffect, useState } from "react";
+
+const StyledNav = styled.nav`
+  @media (max-width: 767.98px) {
+    position: fixed;
+    padding: 0.4rem 2rem;
+    z-index: 4;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-top: 1px solid var(--color-grey-100);
+    background-color: var(--color-grey-0);
+  }
+`;
 
 const NavList = styled.ul`
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
+
+  @media (max-width: 991.98px) {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  @media (max-width: 767.98px) {
+    justify-content: center;
+  }
 `;
 
 const StyledNavLink = styled(NavLink)`
@@ -47,14 +69,47 @@ const StyledNavLink = styled(NavLink)`
   &.active:visited svg {
     color: var(--color-brand-500);
   }
+
+  @media (max-width: 991.98px) {
+    &:link,
+    &:visited {
+      align-items: flex-end;
+      gap: 0.8rem;
+      line-height: 1.3;
+      font-size: 1.4rem;
+      padding: 1rem 1.5rem;
+    }
+    & svg {
+      flex: 0 0 2rem;
+      width: 2rem;
+      height: 2rem;
+    }
+  }
+  @media (max-width: 439.98px) {
+    &:link,
+    &:visited {
+      gap: 0.4rem;
+      padding: 1rem 1.2rem;
+      font-size: 1.2rem;
+    }
+    & svg {
+      flex: 0 0 1.6rem;
+      width: 1.6rem;
+      height: 1.6rem;
+    }
+  }
 `;
 
 function MainNav() {
+  const [userIsDesktop, setUserIsDesktop] = useState(true);
+  useEffect(() => {
+    window.innerWidth > 530 ? setUserIsDesktop(true) : setUserIsDesktop(false);
+  }, [userIsDesktop]);
   return (
-    <nav>
+    <StyledNav>
       <NavList>
         <li>
-          <StyledNavLink to="/home">
+          <StyledNavLink to="/">
             <HiHome />
             <span>Home</span>
           </StyledNavLink>
@@ -62,23 +117,17 @@ function MainNav() {
         <li>
           <StyledNavLink to="/submissions">
             <SiCodeforces />
-            <span>Download Submissions</span>
+            <span>{userIsDesktop && "Download"} Submissions</span>
           </StyledNavLink>
         </li>
-        {/*<li>
-          <StyledNavLink to="/submit">
-            <SiMoodle />
-            <span>Submit Grades</span>
-          </StyledNavLink>
-        </li>*/}
         <li>
           <StyledNavLink to="/handles">
             <FaDatabase />
-            <span>Edit Handles</span>
+            <span>{userIsDesktop && "Edit"} Handles</span>
           </StyledNavLink>
         </li>
       </NavList>
-    </nav>
+    </StyledNav>
   );
 }
 

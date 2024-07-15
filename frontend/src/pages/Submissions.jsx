@@ -3,7 +3,7 @@ import { SiCodeforces } from "react-icons/si";
 import { Description } from "../ui/Description.jsx";
 import GetContestForm from "../features/codeforces/GetContestForm.jsx";
 
-function Handles() {
+function Submissions() {
   return (
     <>
       <Heading as="h1">
@@ -24,4 +24,4 @@ function Handles() {
   );
 }
 
-export default Handles;
+export default Submissions;

@@ -53,6 +53,7 @@ const Button = styled.button`
   border: none;
   border-radius: var(--border-radius-sm);
   box-shadow: var(--shadow-sm);
+  text-align: center;
 
   &:disabled {
     opacity: 0.5;

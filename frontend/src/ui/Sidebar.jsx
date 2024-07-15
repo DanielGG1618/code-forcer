@@ -16,6 +16,16 @@ const StyledSidebar = styled.aside`
   border-right: 1px solid var(--color-grey-100);
   background-color: var(--color-grey-0);
   overflow-y: auto;
+
+  @media (max-width: 991.98px) {
+    border-right: none;
+    border-bottom: 1px solid var(--color-grey-100);
+    grid-row: 1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+  }
 `;
 
 function Sidebar() {

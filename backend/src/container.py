@@ -1,12 +1,18 @@
-from application.contests.contests_service import ContestsService
-from application.students.students_service import StudentsService
-from infrastructure.storage.db_students_repository import DBStudentsRepository
-from infrastructure.code_forces.code_forces_contests_provider import CodeForcesContestsProvider
-from application.moodle_grades.moodle_grades_file_creator import MoodleGradesFileCreator
+import os
 
-students_repository = DBStudentsRepository('students.db')
-contests_provider = CodeForcesContestsProvider()
+from src.features.contests.interfaces import IContestsProvider
+from src.features.students.interfaces import IStudentsRepository
+from src.infrastructure.storage.db_students_repository import DBStudentsRepository
+from src.infrastructure.code_forces.request_sender import CodeForcesRequestsSender
+from src.infrastructure.code_forces.contests_provider import CodeForcesContestsProvider
+from src.utils.dependencies_container import DependenciesContainer
 
-students_service = StudentsService(students_repository, contests_provider)
-contests_service = ContestsService(contests_provider, students_repository)
-moodle_grades_file_creator = MoodleGradesFileCreator()
+db_connection_string = os.getenv('DB_CONNECTION_STRING', 'students.db')
+
+container = DependenciesContainer()
+
+container[IContestsProvider] = lambda: CodeForcesContestsProvider(
+    requests_sender_factory=CodeForcesRequestsSender,
+    anonymous_requests_sender_factory=CodeForcesRequestsSender
+)
+container[IStudentsRepository] = lambda: DBStudentsRepository(db_connection_string)

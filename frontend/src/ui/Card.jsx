@@ -41,6 +41,28 @@ const StyledCard = styled(NavLink)`
     font-weight: 500;
     font-size: 2.4rem;
   }
+
+  @media (max-width: 767.98px) {
+    gap: 0.2rem;
+    & svg {
+      flex: 0 0 8rem;
+      width: 8rem;
+      height: 8rem;
+    }
+    & span {
+      font-size: 1.9rem;
+    }
+  }
+  @media (max-width: 567.98px) {
+    & svg {
+      flex: 0 0 6rem;
+      width: 6rem;
+      height: 6rem;
+    }
+    span {
+      font-size: 1.6rem;
+    }
+  }
 `;
 
 function Card({ title, icon, to }) {

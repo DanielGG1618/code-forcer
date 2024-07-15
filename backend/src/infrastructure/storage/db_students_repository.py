@@ -1,16 +1,14 @@
 from fastapi import HTTPException, status
 from pydantic import EmailStr
 
-from domain.student import Student
-from application.students.students_repository import IStudentsRepository
-from infrastructure.storage.db_context import DBContext
-from infrastructure.storage.students_db_creation import ensure_students_db_is_created
+from src.features.students.model import Student
+from src.features.students.interfaces import IStudentsRepository
+from src.infrastructure.storage.db_context import DBContext
 
 
 class DBStudentsRepository(IStudentsRepository):
     def __init__(self, db_name: str) -> None:
         self.db_context = DBContext(db_name)
-        ensure_students_db_is_created(self.db_context)
 
     def email_exists(self, email: EmailStr) -> bool:
         return self.get_student_by_email(email.lower()) is not None
@@ -25,14 +23,34 @@ class DBStudentsRepository(IStudentsRepository):
         student = student.lower()
 
         if self.email_exists(student.email):
-            print(f"Student with email {student.email} already exists")
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Student already exists")
+            print(f'Student with email {student.email} already exists')
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f'Student with email {student.email} already exists'
+            )
+
+        if self.handle_exists(student.handle):
+            print(f'Student with handle {student.handle} already exists')
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f'Student with handle {student.handle} already exists'
+            )
 
         self.db_context.execute_command(
             "INSERT INTO students(email, handle) VALUES (?, ?)",
             (student.email, student.handle, )
         )
         self.db_context.commit()
+
+    def get_all_students(self) -> list[Student]:
+        result = self.db_context.execute_command(
+            "SELECT email, handle FROM students"
+        ).fetchall()
+
+        return [
+            Student(email=email, handle=handle)
+            for email, handle in result
+        ]
 
     def get_student_by_email(self, email: EmailStr) -> Student | None:
         result = self.db_context.execute_command(
@@ -62,7 +80,10 @@ class DBStudentsRepository(IStudentsRepository):
 
     def update_student(self, email: EmailStr, new_student: Student) -> None:
         if not self.email_exists(email):
-            raise HTTPException(status_code=400, detail="Student does not exist")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail='Student with given email is not found'
+            )
 
         new_student = new_student.lower()
         self.db_context.execute_command(
@@ -73,7 +94,10 @@ class DBStudentsRepository(IStudentsRepository):
 
     def delete_student(self, email: EmailStr) -> None:
         if not self.email_exists(email):
-            raise HTTPException(status_code=400, detail="Student does not exist")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail='Student with given email is not found'
+            )
 
         self.db_context.execute_command(
             "DELETE FROM students WHERE email = ?",

@@ -43,6 +43,7 @@ const GlobalStyles = createGlobalStyle`
       --color-indigo-700: #e0e7ff;
 
       --color-red-100: #fee2e2;
+      --color-red-400: #f87171;
       --color-red-700: #b91c1c;
       --color-red-800: #991b1b;
 
@@ -81,6 +82,7 @@ const GlobalStyles = createGlobalStyle`
       --color-indigo-700: #4338ca;
 
       --color-red-100: #fee2e2;
+      --color-red-400: #f87171;
       --color-red-700: #b91c1c;
       --color-red-800: #991b1b;
 
@@ -112,9 +114,9 @@ const GlobalStyles = createGlobalStyle`
   body {
     font-family: "Poppins", sans-serif;
     color: var(--color-grey-700);
+    background-color: var(--color-grey-50);
 
     transition: color 0.3s, background-color 0.3s;
-    min-height: 100vh;
     line-height: 1.5;
     font-size: 1.6rem;
   }

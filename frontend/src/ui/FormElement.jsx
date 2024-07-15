@@ -1,6 +1,7 @@
 import styled, { css } from "styled-components";
 
 const StyledLabel = styled.label`
+  display: block;
   position: relative;
   padding-top: 2.7rem;
 
@@ -28,10 +29,31 @@ const StyledLabel = styled.label`
   }
 
   ${(props) =>
+    props.borderless === true &&
+    css`
+      &:not(:last-child) {
+        padding-bottom: 0;
+        border-bottom: none;
+      }
+    `}
+
+  ${(props) =>
     props.type === "file" &&
     css`
       &:hover > span {
         transform: translate(0, -1.6rem) scale(1.1);
+      }
+    `}
+
+  ${(props) =>
+    props.text !== undefined &&
+    css`
+      display: grid;
+      column-gap: 1.5rem;
+
+      span:last-child {
+        grid-row: 2;
+        grid-column: span 2;
       }
     `}
 `;
@@ -47,6 +69,11 @@ const StyledSpan = styled.span`
   font-size: 1.5rem;
   line-height: 1.1;
   transition: transform 0.3s ease;
+
+  @media (max-width: 567.98px) {
+    top: 2rem;
+    font-size: 1.3rem;
+  }
 `;
 
 const ErrorMessage = styled.span`
@@ -58,11 +85,27 @@ const ErrorMessage = styled.span`
   margin-top: 0.6rem;
 `;
 
-function FormElement({ label, children, type = "", error }) {
+const StyledText = styled.div`
+  align-self: center;
+  grid-column: 2;
+  @media (max-width: 479.98px) {
+    font-size: 1.3rem;
+  }
+`;
+
+function FormElement({
+  label,
+  children,
+  type = "",
+  error,
+  text,
+  borderless = false,
+}) {
   return (
-    <StyledLabel type={type}>
+    <StyledLabel type={type} text={text} borderless={borderless}>
       {children}
       <StyledSpan>{label}</StyledSpan>
+      {text && <StyledText>{text}</StyledText>}
       {error && <ErrorMessage>{error}</ErrorMessage>}
     </StyledLabel>
   );

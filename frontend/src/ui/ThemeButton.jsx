@@ -1,4 +1,3 @@
-import Button from "./Button.jsx";
 import { useDarkMode } from "../context/DarkModeContext.jsx";
 import styled, { css } from "styled-components";
 
@@ -21,6 +20,10 @@ const StyledLabel = styled.label`
   padding: 0.8rem 2rem;
   border-radius: 50rem;
   ${(props) => themes[props.theme]}
+
+  @media (max-width: 767.98px) {
+    padding: 0.6rem 1.5rem;
+  }
 `;
 
 const StyledInput = styled.input`
@@ -36,6 +39,12 @@ const StyledInput = styled.input`
     transition:
       box-shadow 0.5s ease 0s,
       transform 0.4s ease 0.1s;
+
+    @media (max-width: 767.98px) {
+      width: 1.4rem;
+      height: 1.4rem;
+      box-shadow: inset 0.45rem -0.45rem 0 0 var(--color-brand-600, #000);
+    }
   }
   & + div::before {
     content: "";
@@ -67,6 +76,19 @@ const StyledInput = styled.input`
       -9px -9px 0 var(--color-grey-100, #eee);
     transform: scale(0);
     transition: all 0.3s ease;
+
+    @media (max-width: 767.98px) {
+      margin: -1.5px 0 0 -1.5px;
+      box-shadow:
+        0 -10px 0 var(--color-grey-100, #eee),
+        0 10px 0 var(--color-grey-100, #eee),
+        10px 0 0 var(--color-grey-100, #eee),
+        -10px 0 0 var(--color-grey-100, #eee),
+        7px 7px 0 var(--color-grey-100, #eee),
+        -7px 7px 0 var(--color-grey-100, #eee),
+        7px -7px 0 var(--color-grey-100, #eee),
+        -7px -7px 0 var(--color-grey-100, #eee);
+    }
   }
   &:checked + div {
     box-shadow: inset 32px -32px 0 0 #fff;

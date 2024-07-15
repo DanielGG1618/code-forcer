@@ -1,5 +1,4 @@
 import styled, { css } from "styled-components";
-import { forwardRef } from "react";
 
 const FileInputElement = styled.input.attrs({ type: "file" })`
   display: none;
@@ -26,7 +25,7 @@ const FileInputLabel = styled.label`
   }
 
   ${(props) =>
-    props.edited &&
+    props.edited === "true" &&
     css`
       & span {
         opacity: 1;
@@ -39,6 +38,9 @@ const FileInputText = styled.span`
   padding: 0.8rem 1.2rem;
 `;
 const FileInputButton = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 0.8rem 2.6rem;
   color: var(--color-brand-50);
   border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;
@@ -49,15 +51,14 @@ const FileInputButton = styled.span`
   }
 `;
 
-const FileInput = forwardRef(function FileInput(props, ref) {
-  const { text, edited, ...otherProps } = props;
+function FileInput({ edited, text, register, accept, disabled }) {
   return (
     <FileInputLabel edited={edited}>
       <FileInputText>{text}</FileInputText>
-      <FileInputElement ref={ref} {...otherProps} />
+      <FileInputElement accept={accept} {...register} disabled={disabled} />
       <FileInputButton>Browse</FileInputButton>
     </FileInputLabel>
   );
-});
+}
 
 export default FileInput;
