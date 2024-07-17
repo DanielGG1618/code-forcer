@@ -6,7 +6,7 @@ from src.features.students.model import Student
 
 class StudentRepositoryMock(IStudentsRepository):
     def __init__(self) -> None:
-        self.db: dict = {}
+        self.db: dict[EmailStr, Student] = {}
 
     def add_student(self, student: Student):
         self.db[student.email] = student

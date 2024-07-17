@@ -122,7 +122,7 @@ class ProblemProvider(BaseProvider):
     @staticmethod
     def problem() -> Problem:
         return Problem(
-            index=fake.random_letter(),
+            index=fake.unique.random_letter(),
             name=fake.name(),
             max_points=fake.pyfloat(min_value=0, max_value=100),
             submissions=[fake.submission() for _ in range(fake.random_int(min=0, max=100))]

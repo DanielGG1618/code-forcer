@@ -75,6 +75,6 @@ def invalid_handle():
 def contest(contests_provider_mock):
     contest = fake.contest()
 
-    contests_provider_mock.contests[contest.id] = contest.model_copy()
+    contests_provider_mock.contests[contest.id] = contest.model_copy(deep=True)
 
     return contest
