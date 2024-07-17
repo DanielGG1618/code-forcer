@@ -9,67 +9,35 @@ from src.features.students.interfaces import IStudentsRepository
 from src.features.contests.interfaces import IContestsProvider
 
 
-delete_students_command_handler = DeleteStudentCommandHandler(container[IStudentsRepository])
-get_all_students_command_handler = GetAllStudentsCommandHandler(container[IStudentsRepository])
-create_student_command_handler = CreateStudentCommandHandler(
-    container[IStudentsRepository],
-    container[IContestsProvider]
-)
-
-
-def test_create_student():
+def test_create_student(email, handle):
     # Arrange
-    student_data = Student(email="exampleemail@email.com", handle="blazz1t")
+    student_data = Student(email=email, handle=handle)
 
     # Act
-    create_student_command_handler.handle(student_data)
+    CreateStudentCommandHandler(
+        container[IStudentsRepository],
+        container[IContestsProvider]
+    ).handle(student_data)
 
     # Assert
-    try:
-        assert get_all_students_command_handler.handle()[0] == student_data
-    except AssertionError:
-        delete_students_command_handler.handle("exampleemail@email.com")
-
-    # Clean up
-    delete_students_command_handler.handle("exampleemail@email.com")
+    assert GetStudentQueryHandler(container[IStudentsRepository]).handle(email) == student_data
 
 
-def test_update_student():
+def test_update_student(email, handle):
     # Arrange
-    update_or_create_student_command_handler = UpdateOrCreateStudentCommandHandler(container[IStudentsRepository],
-                                                                                   container[IContestsProvider])
-
-    students_data = [
-        Student(email="test1@email.com", handle="blazz1t"),
-        Student(email="test2@email.com", handle="wyjjeless"),
-        Student(email="test3@email.com", handle="laymorja")
-    ]
-
-    for student in students_data:
-        create_student_command_handler.handle(student)
-
-    new_student = Student(email="test1@email.com", handle="tourist")
-
-    expected_result = [
-        Student(email="test1@email.com", handle="tourist"),
-        Student(email="test2@email.com", handle="wyjjeless"),
-        Student(email="test3@email.com", handle="laymorja")
-    ]
+    new_student = Student(email=email, handle=handle)
 
     # Act
-    update_or_create_student_command_handler.handle("test1@email.com", new_student)
+    UpdateOrCreateStudentCommandHandler(
+        container[IStudentsRepository],
+        container[IContestsProvider]
+    ).handle(email, new_student)
 
     # Assert
-    try:
-        assert get_all_students_command_handler.handle() == expected_result
-    except AssertionError:
-        clean_up_database_data(expected_result)
-
-    # Clean up
-    clean_up_database_data(expected_result)
+    assert GetStudentQueryHandler(container[IStudentsRepository]).handle(email) == new_student
 
 
-def test_get_all_students():
+def test_get_all_students(contests_provider_mock):
     # Arrange
     students_data = [
         Student(email="test1@email.com", handle="wyjjeless"),
@@ -79,31 +47,33 @@ def test_get_all_students():
 
     # Act
     for student in students_data:
-        create_student_command_handler.handle(student)
+        contests_provider_mock.valid_handles.append(student.handle)
+
+        CreateStudentCommandHandler(
+            container[IStudentsRepository],
+            container[IContestsProvider]
+        ).handle(student)
 
     # Assert
-    try:
-        assert get_all_students_command_handler.handle() == students_data
-    except AssertionError:
-        clean_up_database_data(students_data)
+    for student in students_data:
+        assert GetStudentQueryHandler(container[IStudentsRepository]).handle(student.email) == student
 
     # Additional arrange
+    contests_provider_mock.valid_handles.append("tourist")
     students_data.append(Student(email="test4@email.com", handle="tourist"))
 
     # Additional act
-    create_student_command_handler.handle(students_data[3])
+    CreateStudentCommandHandler(
+        container[IStudentsRepository],
+        container[IContestsProvider]
+    ).handle(students_data[-1])
 
     # Additional assert
-    try:
-        assert get_all_students_command_handler.handle() == students_data
-    except AssertionError:
-        clean_up_database_data(students_data)
-
-    # Clean up
-    clean_up_database_data(students_data)
+    for student in students_data:
+        assert GetStudentQueryHandler(container[IStudentsRepository]).handle(student.email) == student
 
 
-def test_get_student_by_email_or_handle():
+def test_get_student_by_email_or_handle(students_repo_mock):
     # Arrange
     students_data = [
         Student(email="test1@email.com", handle="blazz1t"),
@@ -112,24 +82,18 @@ def test_get_student_by_email_or_handle():
     ]
 
     for student in students_data:
-        create_student_command_handler.handle(student)
+        students_repo_mock.db[student.email] = student
 
     # Act
     result_handle = GetStudentQueryHandler(container[IStudentsRepository]).handle("blazz1t")
     result_email = GetStudentQueryHandler(container[IStudentsRepository]).handle("test2@email.com")
 
     # Assert
-    try:
-        assert result_handle == students_data[0], "Getting student by handle failed"
-        assert result_email == students_data[1], "Getting student by email failed"
-    except AssertionError:
-        clean_up_database_data(students_data)
-
-    # Clean up
-    clean_up_database_data(students_data)
+    assert result_handle == students_data[0], "Getting student by handle failed"
+    assert result_email == students_data[1], "Getting student by email failed"
 
 
-def test_delete_student():
+def test_delete_student(students_repo_mock):
     # Arrange
     students_data = [
         Student(email="test1@email.com", handle="blazz1t"),
@@ -138,7 +102,7 @@ def test_delete_student():
     ]
 
     for student in students_data:
-        create_student_command_handler.handle(student)
+        students_repo_mock.db[student.email] = student
 
     expected_result = [
         Student(email="test2@email.com", handle="wyjjeless"),
@@ -146,18 +110,6 @@ def test_delete_student():
     ]
 
     # Act
-    delete_students_command_handler.handle(students_data[0].email)
+    DeleteStudentCommandHandler(container[IStudentsRepository]).handle(students_data[0].email)
 
-    # Assert
-    try:
-        assert get_all_students_command_handler.handle() == expected_result
-    except AssertionError:
-        clean_up_database_data(expected_result)
-
-    # Clean up
-    clean_up_database_data(expected_result)
-
-
-def clean_up_database_data(student_data: list[Student]):
-    for student in student_data:
-        delete_students_command_handler.handle(student.email)
+    assert GetAllStudentsCommandHandler(container[IStudentsRepository]).handle() == expected_result
