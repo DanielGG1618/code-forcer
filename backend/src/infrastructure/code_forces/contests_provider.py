@@ -1,6 +1,8 @@
 from collections import defaultdict
 from datetime import datetime, timedelta
 from typing import Callable
+
+from fastapi import HTTPException, status
 from pytz import timezone
 
 from src.features.students.model import Student
@@ -64,6 +66,10 @@ class CodeForcesContestsProvider(IContestsProvider):
             ) for cf_problem in cf_problems
         ]
 
+        for problem in problems:
+            if problem.max_points is None:
+                problem.max_points = _get_max_points_from_submissions(problem)
+
         return Contest(
             id=contest_id,
             name=cf_contest.name,
@@ -75,3 +81,14 @@ class CodeForcesContestsProvider(IContestsProvider):
     def validate_handle(self, handle: str) -> bool:
         anonymous_requests_sender = self.anonymous_requests_sender_factory()
         return anonymous_requests_sender.validate_handle(handle) is not None
+
+
+def _get_max_points_from_submissions(problem: Problem) -> float:
+    for submission in problem.submissions:
+        if submission.is_successful:
+            return submission.points
+
+    raise HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail=f'Max points for the problem {problem.index} is undefined'
+    )

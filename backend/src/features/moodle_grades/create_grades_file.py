@@ -62,10 +62,10 @@ class CreateGradesFileCommand:
             results_data: MoodleResultsData
     ) -> None:
         for submission in problem.submissions:
-            if submission.points and problem.max_points:
-                problem_points = submission.points / problem.max_points * problem.max_grade
-            else:
+            if submission.points is None or problem.max_points is None:
                 problem_points = CreateGradesFileCommand._get_grade_by_verdict(submission, problem)
+            else:
+                problem_points = submission.points / problem.max_points * problem.max_grade
 
             problem_points = CreateGradesFileCommand._apply_late_submission_policy(results_data,
                                                                                    submission,
