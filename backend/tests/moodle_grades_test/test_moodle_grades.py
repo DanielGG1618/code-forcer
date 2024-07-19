@@ -84,7 +84,7 @@ def test_get_moodle_grades_if_data_is_valid():
                 )
             ],
         ),
-        legally_excused=[],
+        legal_excuses={},
         late_submission_policy=LateSubmissionPolicyData(
             penalty=0.2,
             extra_time=259200

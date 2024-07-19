@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from fastapi import status, APIRouter
 from fastapi.responses import StreamingResponse
 
-from .models import MoodleResultsData, ProblemData, LateSubmissionPolicyData, SubmissionData, ContestData
+from .models import MoodleResultsData, ProblemData, SubmissionData
 
 router = APIRouter()
 
@@ -67,8 +67,8 @@ class CreateGradesFileCommand:
             else:
                 problem_points = CreateGradesFileCommand._get_grade_by_verdict(submission, problem)
 
-            problem_points = CreateGradesFileCommand._apply_late_submission_policy(results_data.late_submission_policy,
-                                                                                   results_data.contest, submission,
+            problem_points = CreateGradesFileCommand._apply_late_submission_policy(results_data,
+                                                                                   submission,
                                                                                    problem_points)
 
             student_grade_map[submission.author_email][0] += problem_points
@@ -79,23 +79,29 @@ class CreateGradesFileCommand:
 
     @staticmethod
     def _apply_late_submission_policy(
-            late_submission_policy: LateSubmissionPolicyData,
-            contest: ContestData,
+            moodle_results_data: MoodleResultsData,
             submission: SubmissionData,
             points: float
     ) -> float:
-
-        extra_time = timedelta(seconds=late_submission_policy.extra_time)
-        deadline_time = contest.start_time_utc + contest.duration
-        deadline_time_extended = deadline_time + extra_time
+        penalty = moodle_results_data.late_submission_policy.penalty
+        legal_excuse = moodle_results_data.legal_excuses.get(submission.author_email)
+        contest_start_time_utc = moodle_results_data.contest.start_time_utc
+        contest_duration = moodle_results_data.contest.duration
+        extra_time_seconds = moodle_results_data.late_submission_policy.extra_time
         submission_time = submission.submission_time_utc
+        excuse_time_seconds = 0 if legal_excuse is None else legal_excuse.duration
+
+        extra_time = timedelta(seconds=extra_time_seconds)
+        excuse_time = timedelta(seconds=excuse_time_seconds)
+        deadline_time = contest_start_time_utc + contest_duration + excuse_time
+
+        deadline_time_extended = deadline_time + extra_time
 
         if submission_time > deadline_time_extended:
             return 0.0
 
         if submission_time > deadline_time:
-            points_deduced = points * late_submission_policy.penalty
-            return points - points_deduced
+            return points * (1 - penalty)
 
         return points
 
