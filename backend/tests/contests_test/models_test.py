@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from src.features.students.model import Student
 from src.features.contests.models import Contest, Problem, Submission
-from src.features.contests.get_contest import most_passed_test_count_selector, latest_submission_selector
+from src.features.contests.submission_selectors import submission_selectors
 from tests.mocks.data_generation import fake
 
 
@@ -80,7 +80,7 @@ def test_contest_select_single_submission_for_each_participant_most_points():
         ),
     ]
 
-    selector = most_passed_test_count_selector
+    selector = submission_selectors["most passed test count"]
 
     problem = Problem(index="A", name="Problem A", max_points=100.0, submissions=submissions)
 
@@ -121,7 +121,7 @@ def test_contest_select_single_submission_for_each_participant_latest_submission
             is_successful=False,
             passed_test_count=0,
             points=0.0,
-            submission_time_utc=datetime.now(),
+            submission_time_utc=datetime.now() + timedelta(days=2),
             programming_language="Python"
         ),
         Submission(
@@ -130,7 +130,7 @@ def test_contest_select_single_submission_for_each_participant_latest_submission
             is_successful=False,
             passed_test_count=5,
             points=50.0,
-            submission_time_utc=datetime.now(),
+            submission_time_utc=datetime.now() + timedelta(days=3),
             programming_language="Python"
         ),
         Submission(
@@ -139,7 +139,7 @@ def test_contest_select_single_submission_for_each_participant_latest_submission
             is_successful=False,
             passed_test_count=0,
             points=0.0,
-            submission_time_utc=datetime.now(),
+            submission_time_utc=datetime.now() + timedelta(days=4),
             programming_language="Python"
         ),
         Submission(
@@ -148,12 +148,12 @@ def test_contest_select_single_submission_for_each_participant_latest_submission
             is_successful=False,
             passed_test_count=7,
             points=70.0,
-            submission_time_utc=datetime.now(),
+            submission_time_utc=datetime.now() + timedelta(days=5),
             programming_language="Python"
         ),
     ]
 
-    selector = latest_submission_selector
+    selector = submission_selectors['latest']
 
     problem = Problem(index="A", name="Problem A", max_points=100.0, submissions=submissions)
 

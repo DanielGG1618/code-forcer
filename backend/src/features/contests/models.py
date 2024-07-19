@@ -19,7 +19,7 @@ class Contest(BaseModel):
         for problem in self.problems:
             problem.map_handles_to_emails(handle_to_email_mapper)
 
-    def select_single_submission_for_each_participant(self, selector: Callable[[list[Submission]], Submission]) -> None:
+    def select_single_submission_for_each_participant(self, selector: SubmissionSelector) -> None:
         for problem in self.problems:
             problem.select_single_submission_for_each_participant(selector)
 
@@ -42,7 +42,7 @@ class Problem(BaseModel):
         for submission in self.submissions:
             submission.map_author_handle_to_email(handle_to_email_mapper)
 
-    def select_single_submission_for_each_participant(self, selector: Callable[[list[Submission]], Submission]) -> None:
+    def select_single_submission_for_each_participant(self, selector: SubmissionSelector) -> None:
         submissions_by_student = defaultdict(list[Submission])
 
         for submission in self.submissions:
@@ -73,3 +73,6 @@ class Submission(BaseModel):
     def map_author_handle_to_email(self, handle_to_email_mapper: Callable[[str], EmailStr | None]) -> None:
         if self.author.email is None:
             self.author.email = handle_to_email_mapper(self.author.handle)
+
+
+SubmissionSelector = Callable[[list[Submission]], Submission]

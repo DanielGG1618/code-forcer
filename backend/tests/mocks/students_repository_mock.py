@@ -11,7 +11,7 @@ class StudentRepositoryMock(IStudentsRepository):
     def add_student(self, student: Student):
         self.db[student.email] = student
 
-    def get_student_by_email(self, email: EmailStr) -> Student:
+    def get_student_by_email(self, email: EmailStr) -> Student | None:
         student = self.db.get(email)
 
         if not student:
@@ -19,7 +19,7 @@ class StudentRepositoryMock(IStudentsRepository):
 
         return student
 
-    def get_student_by_handle(self, handle: str) -> Student:
+    def get_student_by_handle(self, handle: str) -> Student | None:
         for student in self.db.values():
             if student.handle == handle:
                 return student

@@ -93,7 +93,7 @@ def test_get_moodle_grades_if_data_is_valid():
 
     expected_output = 'Email,test contest Grade,test contest Feedback\r\na@a.a,76.0,\r\nb@b.b,60.0,\r\nc@c.c,148.0,\r\n'
 
-    response = client.post("/moodle_grades", data=moodle_result_data.json())
+    response = client.post("/moodle_grades", data=moodle_result_data.model_dump_json())
 
     assert response.status_code == status.HTTP_200_OK
     assert response.text == expected_output
