@@ -9,8 +9,7 @@ from src.features.students.models import Student
 from src.features.contests.models import Contest, Submission, Problem
 from src.features.contests.interfaces import IContestsProvider
 from .enums import CfVerdict
-from .request_sender import (ICodeForcesRequestsSender,
-                             IAnonymousCodeForcesRequestsSender)
+from .request_sender import ICodeForcesRequestsSender, IAnonymousCodeForcesRequestsSender
 
 
 class CodeForcesContestsProvider(IContestsProvider):
@@ -24,16 +23,6 @@ class CodeForcesContestsProvider(IContestsProvider):
     ):
         self.requests_sender_factory = requests_sender_factory
         self.anonymous_requests_sender_factory = anonymous_requests_sender_factory
-
-    def get_contest_results(self, contest_id: int, api_key: str, api_secret: str):
-        requests_sender = self.requests_sender_factory(api_key, api_secret)
-
-        _, _, rows = requests_sender.contest_standings(contest_id)
-
-        return [
-            {"handle": row.party.members[0].handle, "result": row.points}
-            for row in rows
-        ]
 
     def get_contest(self, contest_id: int, api_key: str, api_secret: str) -> Contest:
         requests_sender = self.requests_sender_factory(api_key, api_secret)
