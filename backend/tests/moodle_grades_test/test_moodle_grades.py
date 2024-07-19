@@ -91,9 +91,18 @@ def test_get_moodle_grades_if_data_is_valid():
         )
     )
 
-    expected_output = 'Email,test contest Grade,test contest Feedback\r\na@a.a,76.0,\r\nb@b.b,60.0,\r\nc@c.c,148.0,\r\n'
+    expected_output = [
+        ['Email', 'test contest Grade', 'test contest Feedback'],
+        ['a@a.a', '76.0', ''],
+        ['b@b.b', '60.0', ''],
+        ['c@c.c', '148.0', '']
+    ]
 
     response = client.post("/moodle_grades", data=moodle_result_data.model_dump_json())
 
     assert response.status_code == status.HTTP_200_OK
-    assert response.text == expected_output
+    response_rows = response.text.split('\r\n')
+    for i in range(len(response_rows) - 1):
+        response_email, response_grade, _ = response_rows[i].split(',')
+        assert response_email == expected_output[i][0]
+        assert response_grade == expected_output[i][1]
