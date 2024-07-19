@@ -7,7 +7,18 @@ export async function getContest(contestID, APIKey, secretKey) {
     throw response;
   }
 
-  const data = response.json();
+  const data = await response.json();
+  return data;
+}
+export async function getSelectors() {
+  const url = `/submission-selectors`;
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw response;
+  }
+
+  const data = await response.json();
   return data;
 }
 export async function handlePostRequest(info, data) {
@@ -15,7 +26,8 @@ export async function handlePostRequest(info, data) {
   const additionTime =
     parseFloat(data["additional-days"] ? data["additional-days"] : 0) * 86400 +
     parseFloat(data["additional-hours"] ? data["additional-hours"] : 0) * 3600 +
-    parseFloat(data["additional-minutes"] ? data["additional-minutes"] : 0) * 60;
+    parseFloat(data["additional-minutes"] ? data["additional-minutes"] : 0) *
+      60;
   const url = `/moodle_grades`;
 
   const body = {
@@ -34,11 +46,12 @@ export async function handlePostRequest(info, data) {
         };
       }),
     },
-    legally_excused: [],
+    legal_excuses: {},
     late_submission_policy: {
       penalty: penalty < 0 ? 0 : penalty > 1 ? 1 : penalty,
       extra_time: additionTime,
     },
+    submission_selector_name: data.selector.value,
   };
 
   console.log("Body of request:", body);

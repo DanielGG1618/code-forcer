@@ -28,11 +28,11 @@ const router = createBrowserRouter([
             element: <Handles />,
           },
           {
-            path: "submissions",
+            path: "contests",
             element: <Submissions />,
           },
           {
-            path: "submissions/:contestId",
+            path: "contests/:contestId",
             element: <Settings />,
             loader: settingsLoader,
           },

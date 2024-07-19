@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { BsFillArrowLeftSquareFill } from "react-icons/bs";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { handlePostRequest } from "../../api/contests.js";
 import { useLocalStorageState } from "../../hooks/useLocalStorage.js";
 import { Link, useNavigate } from "react-router-dom";
+import Select from "react-select";
+
 import {
   StyledCover,
   ButtonBack,
@@ -18,6 +20,7 @@ import {
   UndefinedDescription,
   LateSubmissionsContainer,
   TimeConfiguration,
+  SubmissionsAction,
 } from "./SubmissionsInfo.components.jsx";
 import Button from "../../ui/Button.jsx";
 import Heading from "../../ui/Heading.jsx";
@@ -25,7 +28,48 @@ import SpinnerMini from "../../ui/SpinnnerMini.jsx";
 import FormElement from "../../ui/FormElement.jsx";
 import Input from "../../ui/Input.jsx";
 
-function SubmissionsInfo({ info }) {
+const selectStyles = {
+  container: (baseStyles) => ({
+    ...baseStyles,
+    fontSize: "1.4rem",
+    height: "4.5rem",
+  }),
+  control: (baseStyles) => ({
+    ...baseStyles,
+    height: "4.5rem",
+  }),
+};
+const selectTheme = (theme) => ({
+  ...theme,
+  colors: {
+    ...theme.colors,
+    primary: "var(--color-brand-600)",
+    primary75: "var(--color-brand-500)",
+    primary50: "var(--color-brand-400)",
+    primary25: "var(--color-brand-400)",
+    danger: "var(--color-red-700)",
+    dangerLight: "var(--color-red-100)",
+    neutral0: "var(--color-grey-0)",
+    neutral5: "var(--color-grey-50)",
+    neutral10: "var(--color-grey-100)",
+    neutral20: "var(--color-grey-200)",
+    neutral30: "var(--color-grey-300)",
+    neutral40: "var(--color-grey-400)",
+    neutral50: "var(--color-grey-500)",
+    neutral60: "var(--color-grey-600)",
+    neutral70: "var(--color-grey-700)",
+    neutral80: "var(--color-grey-800)",
+    neutral90: "var(--color-grey-900)",
+  },
+});
+
+function SubmissionsInfo({ info, selectors }) {
+  const options = selectors?.map((el) => {
+    return {
+      value: el,
+      label: el.slice(0, 1).toUpperCase() + el.slice(1),
+    };
+  });
   const definedUsers = {
     ...info,
     problems: info.problems.map((item) => {
@@ -53,6 +97,7 @@ function SubmissionsInfo({ info }) {
     handleSubmit,
     formState: { errors },
     watch,
+    control,
   } = useForm();
 
   useEffect(() => {
@@ -71,6 +116,7 @@ function SubmissionsInfo({ info }) {
 
   const onSubmit = function (data) {
     setIsGetting(true);
+    data = data.selector ? data : { ...data, selector: options[0] };
 
     handlePostRequest(definedUsers, data)
       .then((res) => {
@@ -104,7 +150,7 @@ function SubmissionsInfo({ info }) {
 
   return (
     <StyledCover>
-      <ButtonBack onClick={() => navigate("/submissions")}>
+      <ButtonBack onClick={() => navigate("/contests")}>
         <BsFillArrowLeftSquareFill />
       </ButtonBack>
       <Heading as="h2">Contest &quot;{info.name}&quot;</Heading>
@@ -149,9 +195,24 @@ function SubmissionsInfo({ info }) {
             <Link to="/handles">download the handles</Link> of the participants
           </UndefinedDescription>
         ) : (
-          <Button disabled={isGetting} type="submit">
-            {isGetting ? <SpinnerMini /> : "Create a rating file"}
-          </Button>
+          <SubmissionsAction>
+            <Controller
+              control={control}
+              name="selector"
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  placeholder="Choose submission type"
+                  theme={selectTheme}
+                  styles={selectStyles}
+                  options={options}
+                />
+              )}
+            />
+            <Button disabled={isGetting} type="submit">
+              {isGetting ? <SpinnerMini /> : "Create a rating file"}
+            </Button>
+          </SubmissionsAction>
         )}
       </List>
     </StyledCover>
@@ -205,7 +266,16 @@ function SubmissionsSettings({ register, isGetting, contestInfo }) {
           disabled={isGetting}
           placeholder={20}
           defaultValue={contestInfo["penalty"] || null}
-          {...register("penalty", { min: 0 })}
+          {...register("penalty", {
+            min: {
+              value: 0,
+              message: "Can not be negative",
+            },
+            max: {
+              value: 100,
+              message: "Maxium penalty is 100%",
+            },
+          })}
           style={{ textAlign: "center" }}
         />
       </FormElement>

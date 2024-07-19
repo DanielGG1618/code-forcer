@@ -249,3 +249,25 @@ export const TimeConfiguration = styled.div`
     }
   }
 `;
+
+export const SubmissionsAction = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+
+  > div {
+    flex: 0 0 25rem;
+  }
+
+  @media (max-width: 567.98px) {
+    flex-direction: column;
+
+    > * {
+      width: 100%;
+    }
+    > div {
+      flex: auto;
+    }
+  }
+`;

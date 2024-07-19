@@ -9,7 +9,7 @@ const StyledNav = styled.nav`
   @media (max-width: 767.98px) {
     position: fixed;
     padding: 0.4rem 2rem;
-    z-index: 4;
+    z-index: 1;
     bottom: 0;
     left: 0;
     right: 0;
@@ -115,7 +115,7 @@ function MainNav() {
           </StyledNavLink>
         </li>
         <li>
-          <StyledNavLink to="/submissions">
+          <StyledNavLink to="/contests">
             <SiCodeforces />
             <span>{userIsDesktop && "Download"} Submissions</span>
           </StyledNavLink>

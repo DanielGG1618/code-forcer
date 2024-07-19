@@ -31,7 +31,7 @@ function Home() {
         <Card
           title="Download Submissions"
           icon={SiCodeforces}
-          to="/submissions"
+          to="/contests"
         />
         {/*<Card title="Submit Grades" icon={SiMoodle} to="/submit" />*/}
         <Card title="Edit Handles" icon={FaDatabase} to="/handles" />

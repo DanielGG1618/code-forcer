@@ -3,11 +3,11 @@ import { TbSettingsFilled } from "react-icons/tb";
 import { Description } from "../ui/Description.jsx";
 import SubmissionsInfo from "../features/codeforces/SubmissionInfo.jsx";
 import { redirect, useLoaderData } from "react-router-dom";
-import { getContest } from "../api/contests.js";
+import { getContest, getSelectors } from "../api/contests.js";
 
 export async function loader({ params }) {
   if (!localStorage.getItem("api") || !localStorage.getItem("secret")) {
-    return redirect("/submissions");
+    return redirect("/contests");
   }
 
   const contest = await getContest(
@@ -15,11 +15,12 @@ export async function loader({ params }) {
     JSON.parse(localStorage.getItem("api")),
     JSON.parse(localStorage.getItem("secret")),
   );
-  return { contest };
+  const selectors = await getSelectors();
+  return { contest, selectors };
 }
 
 function Settings() {
-  const { contest } = useLoaderData();
+  const { contest, selectors } = useLoaderData();
 
   return (
     <>
@@ -36,7 +37,7 @@ function Settings() {
         </p>
         <p>You can also copy the list of undefined participants</p>
       </Description>
-      <SubmissionsInfo info={contest} />
+      <SubmissionsInfo info={contest} selectors={selectors} />
     </>
   );
 }
